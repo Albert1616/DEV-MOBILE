@@ -140,6 +140,10 @@ class Form extends StatelessWidget {
                         SizedBox(height: 17),
                         DropdownButton(
                           isExpanded: true,
+                          underline: Container(
+                            height: 1,
+                            color: Colors.grey.shade400,
+                          ),
                           hint: Text("State",
                               style: TextStyle(color: Colors.grey.shade400)),
                           onChanged: (s) => {},
@@ -177,10 +181,14 @@ class Form extends StatelessWidget {
                         SizedBox(height: 17),
                         DropdownButton(
                           isExpanded: true,
+                          underline: Container(
+                            height: 1,
+                            color: Colors.grey.shade400,
+                          ),
                           hint: Text("Country",
                               style: TextStyle(color: Colors.grey.shade400)),
                           onChanged: (s) => {},
-                          items: <String>['Country1', 'Country 2', 'Country 3']
+                          items: <String>['State 1', 'State 2', 'State 3']
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
