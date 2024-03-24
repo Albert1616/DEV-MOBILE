@@ -1,8 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 void main() {
   runApp(PersonalForm());
@@ -14,9 +10,9 @@ class PersonalForm extends StatelessWidget {
     return MaterialApp(
       home: Form(),
       theme: ThemeData().copyWith(
-          colorScheme: ThemeData()
-              .colorScheme
-              .copyWith(primary: Colors.blueGrey.shade700)),
+        colorScheme:
+            ThemeData().colorScheme.copyWith(primary: Colors.blueGrey.shade700),
+      ),
     );
   }
 }
@@ -32,13 +28,14 @@ class Form extends StatelessWidget {
           onPressed: () {},
         ),
         title: Text(
-          "Aplication",
+          "Application",
           style: TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.more_vert, color: Colors.white))
+            onPressed: () {},
+            icon: Icon(Icons.more_vert, color: Colors.white),
+          )
         ],
       ),
       body: SingleChildScrollView(
@@ -49,11 +46,23 @@ class Form extends StatelessWidget {
             children: [
               Text("Personal Info", style: TextStyle(fontSize: 20)),
               TextField(
-                decoration: InputDecoration(labelText: "First name"),
+                decoration: InputDecoration(
+                  hintText: "First name",
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade400),
+                  ),
+                  hintStyle: TextStyle(color: Colors.grey.shade400),
+                ),
               ),
               SizedBox(height: 15),
               TextField(
-                decoration: InputDecoration(labelText: "Last name"),
+                decoration: InputDecoration(
+                  hintText: "Last name",
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade400),
+                  ),
+                  hintStyle: TextStyle(color: Colors.grey.shade400),
+                ),
               ),
               SizedBox(height: 15),
               Row(
@@ -63,81 +72,127 @@ class Form extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextField(
-                          decoration: InputDecoration(labelText: "Birth Day"),
+                          decoration: InputDecoration(
+                            hintText: "Birth Day",
+                            helperText: "MM/DD/YYYY",
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey.shade400),
+                            ),
+                            hintStyle: TextStyle(color: Colors.grey.shade400),
+                            helperStyle: TextStyle(color: Colors.grey.shade400),
+                          ),
                         ),
-                        Text("MM/DD/YYYY")
                       ],
                     ),
                   ),
                   SizedBox(width: 15),
                   Expanded(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: "Social security",
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText: "Social security",
+                            helperText: "###-##-###",
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey.shade400),
+                            ),
+                            hintStyle: TextStyle(color: Colors.grey.shade400),
+                            helperStyle: TextStyle(color: Colors.grey.shade400),
+                          ),
                         ),
-                      ),
-                      Text("###-##-###")
-                    ],
-                  ))
+                      ],
+                    ),
+                  ),
                 ],
               ),
               SizedBox(height: 25),
               Text("Residence Address", style: TextStyle(fontSize: 20)),
-              TextField(decoration: InputDecoration(labelText: "Address")),
-              Row(children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(labelText: "City"),
+              TextField(
+                decoration: InputDecoration(
+                  hintText: "Address",
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade400),
                   ),
+                  hintStyle: TextStyle(color: Colors.grey.shade400),
                 ),
-                Expanded(
-                  child: DropdownMenu(
-                    initialSelection: "State",
-                    dropdownMenuEntries: <DropdownMenuEntry<String>>[
-                      DropdownMenuEntry(value: "State", label: "State"),
-                      DropdownMenuEntry(value: "State", label: "State"),
-                      DropdownMenuEntry(value: "State", label: "State"),
-                    ],
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: "City",
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey.shade400),
+                        ),
+                        hintStyle: TextStyle(color: Colors.grey.shade400),
+                      ),
+                    ),
                   ),
-                ),
-              ]),
-              Row(children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(labelText: "Zip Code"),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 17),
+                        DropdownButton(
+                          isExpanded: true,
+                          hint: Text("State",
+                              style: TextStyle(color: Colors.grey.shade400)),
+                          onChanged: (s) => {},
+                          items: <String>['State 1', 'State 2', 'State 3']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: DropdownMenu(
-                    initialSelection: "Country",
-                    dropdownMenuEntries: <DropdownMenuEntry<String>>[
-                      DropdownMenuEntry(value: "Country", label: "Country"),
-                      DropdownMenuEntry(value: "Country", label: "Country"),
-                      DropdownMenuEntry(value: "Country", label: "Country"),
-                    ],
+                ],
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: "Zip Code",
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey.shade400),
+                        ),
+                        hintStyle: TextStyle(color: Colors.grey.shade400),
+                      ),
+                    ),
                   ),
-                ),
-              ]),
-              // Row(children: [
-              //   Expanded(
-              //     child: Column(
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       children: [
-              //         TextField(
-              //             decoration: InputDecoration(labelText: "Zip Code")),
-              //         SizedBox(width: 15),
-              //         // DropdownButton(items: const [
-              //         //   DropdownMenuItem(child: Text("Country")),
-              //         //   DropdownMenuItem(child: Text("Country")),
-              //         //   DropdownMenuItem(child: Text("Country")),
-              //         // ], onChanged: (dynamic) {})
-              //       ],
-              //     ),
-              //   ),
-              // ])
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 17),
+                        DropdownButton(
+                          isExpanded: true,
+                          hint: Text("Country",
+                              style: TextStyle(color: Colors.grey.shade400)),
+                          onChanged: (s) => {},
+                          items: <String>['Country1', 'Country 2', 'Country 3']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
