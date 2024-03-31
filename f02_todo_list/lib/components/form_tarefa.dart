@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class FormTarefa extends StatefulWidget {
-  Function(String, String, Prioridade, DateTime?) onSubmit;
+  Function(String, String, Prioridade, DateTime) onSubmit;
   FormTarefa(this.onSubmit);
 
   @override

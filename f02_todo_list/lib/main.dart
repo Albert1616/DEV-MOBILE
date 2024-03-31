@@ -47,13 +47,14 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   _novaTarefa(
-      String titulo, String descricao, Prioridade prioridade, DateTime? data) {
+      String titulo, String descricao, Prioridade prioridade, DateTime data) {
     Tarefa novaTarefa = Tarefa(
-        id: Random().nextInt(9999).toString(),
-        titulo: titulo,
-        data: data ?? DateTime.now(),
-        descricao: descricao,
-        prioridade: prioridade);
+      id: Random().nextInt(9999).toString(),
+      titulo: titulo,
+      data: data,
+      descricao: descricao,
+      prioridade: prioridade,
+    );
     setState(() {
       _tarefas.add(novaTarefa);
     });
@@ -82,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(5),
         child: Column(
           children: [
             // formulario de tarefa
