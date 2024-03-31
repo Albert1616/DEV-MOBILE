@@ -46,6 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
         data: DateTime.now()),
   ];
 
+  String filtroAtual = "nenhum";
+
   _novaTarefa(
       String titulo, String descricao, Prioridade prioridade, DateTime data) {
     Tarefa novaTarefa = Tarefa(
@@ -93,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 20,
             ),
             // lista de tarefas
-            ListaTarefa(listaTarefas: _tarefas),
+            ListaTarefa(listaTarefas: _tarefas, filtroAtual: filtroAtual),
           ],
         ),
       ),
