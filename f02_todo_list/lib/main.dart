@@ -1,8 +1,5 @@
 import 'dart:math';
-
-import 'package:f02_todo_list/model/listaTarefas.dart';
 import 'package:flutter/material.dart';
-
 import 'components/form_tarefa.dart';
 import 'components/lista_tarefa.dart';
 import 'model/prioridade.dart';
@@ -37,24 +34,24 @@ class _MyHomePageState extends State<MyHomePage> {
         id: 't0',
         titulo: 'Estudar',
         descricao: "descricao",
+        comentarios: "comentarios",
         prioridade: Prioridade.ALTA,
         data: DateTime.now()),
     Tarefa(
         id: 't1',
         titulo: 'Jogar',
         descricao: "descricao",
+        comentarios: "comentarios",
         prioridade: Prioridade.ALTA,
         data: DateTime.now()),
   ];
-
-  String filtroAtual = "nenhum";
-
-  _novaTarefa(
-      String titulo, String descricao, Prioridade prioridade, DateTime data) {
+  _novaTarefa(String titulo, String descricao, String comentarios,
+      Prioridade prioridade, DateTime data) {
     Tarefa novaTarefa = Tarefa(
       id: Random().nextInt(9999).toString(),
       titulo: titulo,
       data: data,
+      comentarios: comentarios,
       descricao: descricao,
       prioridade: prioridade,
     );
@@ -102,10 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 20,
             ),
             // lista de tarefas
-            ListaTarefa(
-                listaTarefas: _tarefas,
-                filtroAtual: filtroAtual,
-                onUpdate: _updateList),
+            ListaTarefa(listaTarefas: _tarefas, onUpdate: _updateList),
           ],
         ),
       ),

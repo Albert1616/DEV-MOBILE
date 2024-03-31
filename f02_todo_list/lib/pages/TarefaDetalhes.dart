@@ -21,10 +21,11 @@ class _TarefaDetalhesState extends State<TarefaDetalhes> {
     Navigator.pop(context);
   }
 
-  _onUpdate(
-      String titulo, String descricao, Prioridade prioridade, DateTime data) {
+  _onUpdate(String titulo, String descricao, String comentarios,
+      Prioridade prioridade, DateTime data) {
     widget.tarefa.titulo = titulo;
     widget.tarefa.descricao = descricao;
+    widget.tarefa.comentarios = comentarios;
     widget.tarefa.prioridade = prioridade;
     widget.tarefa.data = data;
     widget.onUpdate(widget.tarefa);
@@ -55,6 +56,7 @@ class _TarefaDetalhesState extends State<TarefaDetalhes> {
               Text(
                   "Prioridade: ${widget.tarefa.prioridade.toString().split(".").last}"),
               Text("Descrição: ${widget.tarefa.descricao}"),
+              Text("Comentários: ${widget.tarefa.comentarios}"),
               Text("Data de execução: ${widget.tarefa.data}"),
               Row(
                 children: [

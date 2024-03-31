@@ -5,17 +5,14 @@ class Tarefa {
   String titulo;
   String descricao;
   Prioridade prioridade;
-  List<String> comentarios = [];
+  String comentarios;
   DateTime data;
   DateTime data_create = DateTime.now();
-  Tarefa({
-    required this.id,
-    required this.titulo,
-    required this.descricao,
-    required this.prioridade,
-    required this.data,
-  });
-  void insertComment(String comentario) {
-    comentarios.add(comentario);
-  }
+  Tarefa(
+      {required this.id,
+      required this.titulo,
+      required this.descricao,
+      required this.prioridade,
+      required this.data,
+      required this.comentarios});
 }

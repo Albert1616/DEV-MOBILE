@@ -12,19 +12,17 @@ import '../model/tarefa.dart';
 
 class ListaTarefa extends StatefulWidget {
   List<Tarefa> listaTarefas;
-  String filtroAtual;
   Function(List<Tarefa>) onUpdate;
 
-  ListaTarefa(
-      {required this.listaTarefas,
-      required this.filtroAtual,
-      required this.onUpdate});
+  ListaTarefa({required this.listaTarefas, required this.onUpdate});
 
   @override
   State<ListaTarefa> createState() => _ListaTarefaState();
 }
 
 class _ListaTarefaState extends State<ListaTarefa> {
+  String _prioridadeSelecionada = "Nenhuma";
+
   _corPrioridade(Prioridade priorirade) {
     switch (priorirade) {
       case Prioridade.ALTA:
@@ -95,17 +93,17 @@ class _ListaTarefaState extends State<ListaTarefa> {
     widget.onUpdate(widget.listaTarefas);
   }
 
-  _filtrarPrioridade(List<Tarefa> tarefas, String prioridade) {
-    if (prioridade == "nenhum") {
+  _filtrarPrioridade(String prioridade) {
+    if (prioridade == "Nenhuma") {
       return widget.listaTarefas;
     } else {
       List<Tarefa> tarefas_filtradas = [];
-      for (Tarefa tarefa in tarefas) {
-        if (tarefa.prioridade.toString() == prioridade) {
+      for (Tarefa tarefa in widget.listaTarefas) {
+        if (tarefa.prioridade.toString().split(".").last == prioridade) {
           tarefas_filtradas.add(tarefa);
         }
       }
-      return tarefas_filtradas;
+      return tarefas_filtradas.isNotEmpty ? tarefas_filtradas : [];
     }
   }
 
@@ -122,74 +120,111 @@ class _ListaTarefaState extends State<ListaTarefa> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 300,
-        child: widget.listaTarefas.length > 0
-            ? ListView.builder(
-                itemCount: widget.listaTarefas.length,
-                itemBuilder: (context, index) {
-                  final tarefa = _filtrarPrioridade(
-                      widget.listaTarefas, widget.filtroAtual)[index];
-                  return GestureDetector(
-                    onTap: (() => {_detalhesTarefa(tarefa)}),
-                    child: Card(
-                      color: tarefa.data.isAfter(DateTime.now())
-                          ? Colors.green.shade300
-                          : Colors.red.shade300,
-                      child: Row(
-                        children: [
-                          Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
+      height: 300,
+      child: Column(
+        children: [
+          Text("Filtrar por prioridade"),
+          DropdownButton<String>(
+            value: _prioridadeSelecionada,
+            items: [
+              DropdownMenuItem(
+                  child: Text("Nenhuma"),
+                  value: "Nenhuma",
+                  onTap: () => {_filtrarPrioridade("Nenhuma")}),
+              DropdownMenuItem(
+                  child: Text("BAIXA"),
+                  value: "BAIXA",
+                  onTap: () => {_filtrarPrioridade("BAIXA")}),
+              DropdownMenuItem(
+                  child: Text("NORMAL"),
+                  value: "NORMAL",
+                  onTap: () => {_filtrarPrioridade("NORMAL")}),
+              DropdownMenuItem(
+                  child: Text("ALTA"),
+                  value: "ALTA",
+                  onTap: () => {_filtrarPrioridade("ALTA")})
+            ],
+            onChanged: (String? prioridade) {
+              setState(() {
+                _prioridadeSelecionada = prioridade!;
+              });
+            },
+          ),
+          Expanded(
+            child: widget.listaTarefas.length > 0
+                ? ListView.builder(
+                    itemCount:
+                        _filtrarPrioridade(_prioridadeSelecionada).length,
+                    itemBuilder: (context, index) {
+                      final tarefa =
+                          _filtrarPrioridade(_prioridadeSelecionada)[index];
+                      return GestureDetector(
+                        onTap: (() => {_detalhesTarefa(tarefa)}),
+                        child: Card(
+                          color: tarefa.data.isAfter(DateTime.now())
+                              ? Colors.green.shade300
+                              : Colors.red.shade300,
+                          child: Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
                                     width: 2,
                                     color: tarefa.data.day >= DateTime.now().day
                                         ? Theme.of(context).colorScheme.primary
                                         : Theme.of(context)
                                             .colorScheme
-                                            .secondary),
-                              ),
-                              margin: EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 10,
-                              ),
-                              padding: EdgeInsets.all(10),
-                              child: Text(
+                                            .secondary,
+                                  ),
+                                ),
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 10,
+                                ),
+                                padding: EdgeInsets.all(10),
+                                child: Text(
                                   DateFormat('d MMM y').format(tarefa.data),
                                   style: TextStyle(
-                                      color: tarefa.data.day >=
-                                              DateTime.now().day
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .secondary))),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(tarefa.titulo),
-                              Text(
-                                "Prioridade: ${tarefa.prioridade.toString().split(".").last}",
-                                style: TextStyle(
-                                    color: _corPrioridade(tarefa.prioridade)),
-                              )
+                                    color: tarefa.data.day >= DateTime.now().day
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                  ),
+                                ),
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(tarefa.titulo),
+                                  Text(
+                                    "Prioridade: ${tarefa.prioridade.toString().split(".").last}",
+                                    style: TextStyle(
+                                      color: _corPrioridade(tarefa.prioridade),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(width: 20),
+                              IconButton(
+                                iconSize: 30,
+                                onPressed: () {
+                                  _modelDeleteTarefa(
+                                      context, tarefa.id, tarefa.titulo);
+                                },
+                                icon: Icon(Icons.delete),
+                              ),
                             ],
                           ),
-                          SizedBox(width: 20),
-                          IconButton(
-                              iconSize: 30,
-                              onPressed: () {
-                                _modelDeleteTarefa(
-                                    context, tarefa.id, tarefa.titulo);
-                              },
-                              icon: Icon(
-                                Icons.delete,
-                              ))
-                        ],
-                      ),
-                    ),
-                  );
-                })
-            : Text("Não há tarefas cadastradas!"));
+                        ),
+                      );
+                    },
+                  )
+                : Center(child: Text("Não há tarefas cadastradas!")),
+          ),
+        ],
+      ),
+    );
   }
 }

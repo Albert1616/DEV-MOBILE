@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class FormTarefa extends StatefulWidget {
-  Function(String, String, Prioridade, DateTime) onSubmit;
+  Function(String, String, String, Prioridade, DateTime) onSubmit;
   FormTarefa(this.onSubmit);
 
   @override
@@ -15,6 +15,7 @@ class FormTarefa extends StatefulWidget {
 class _FormTarefaState extends State<FormTarefa> {
   final _tarefaController = TextEditingController();
   final _descricaoController = TextEditingController();
+  final _comentariosController = TextEditingController();
   Prioridade _prioridadeSelecionada = Prioridade.BAIXA;
   DateTime _dataSelecionada = DateTime.now();
 
@@ -23,12 +24,14 @@ class _FormTarefaState extends State<FormTarefa> {
     _submitForm() {
       final titulo = _tarefaController.text;
       final descricao = _descricaoController.text;
+      final comentarios = _comentariosController.text;
       final prioridade = _prioridadeSelecionada;
       if (_tarefaController.text.isEmpty) {
         return;
       }
       //passando dado para componente pai
-      widget.onSubmit(titulo, descricao, prioridade, _dataSelecionada);
+      widget.onSubmit(
+          titulo, descricao, comentarios, prioridade, _dataSelecionada);
     }
 
     _showDatePicker() {
@@ -59,6 +62,11 @@ class _FormTarefaState extends State<FormTarefa> {
             controller: _descricaoController,
             decoration: const InputDecoration(
                 labelText: 'Insira a descrição da tarefa'),
+          ),
+          TextField(
+            controller: _comentariosController,
+            decoration: const InputDecoration(
+                labelText: 'Insira comentarios sobre a tarefa'),
           ),
           DropdownButton<Prioridade>(
               value: _prioridadeSelecionada,
