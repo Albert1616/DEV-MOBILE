@@ -13,8 +13,12 @@ import '../model/tarefa.dart';
 class ListaTarefa extends StatefulWidget {
   List<Tarefa> listaTarefas;
   String filtroAtual;
+  Function(List<Tarefa>) onUpdate;
 
-  ListaTarefa({required this.listaTarefas, required this.filtroAtual});
+  ListaTarefa(
+      {required this.listaTarefas,
+      required this.filtroAtual,
+      required this.onUpdate});
 
   @override
   State<ListaTarefa> createState() => _ListaTarefaState();
@@ -71,14 +75,24 @@ class _ListaTarefaState extends State<ListaTarefa> {
   }
 
   _deleteTarefa(String id) {
+    Tarefa tarefa_remove = widget.listaTarefas[0];
     for (Tarefa tarefa in widget.listaTarefas) {
       if (tarefa.id == id) {
-        setState(() {
-          widget.listaTarefas.remove(tarefa);
-        });
-        return;
+        tarefa_remove = tarefa;
       }
     }
+    List<Tarefa> tarefas_update = widget.listaTarefas;
+    tarefas_update.remove(tarefa_remove);
+    widget.onUpdate(tarefas_update);
+  }
+
+  _updateTarefa(Tarefa tarefa) {
+    int index =
+        widget.listaTarefas.indexWhere((element) => element.id == tarefa.id);
+    if (index != -1) {
+      widget.listaTarefas[index] = tarefa;
+    }
+    widget.onUpdate(widget.listaTarefas);
   }
 
   _filtrarPrioridade(List<Tarefa> tarefas, String prioridade) {
@@ -96,8 +110,13 @@ class _ListaTarefaState extends State<ListaTarefa> {
   }
 
   _detalhesTarefa(Tarefa tarefa) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (_) => TarefaDetalhes(tarefa: tarefa)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => TarefaDetalhes(
+                tarefa: tarefa,
+                onDelete: _deleteTarefa,
+                onUpdate: _updateTarefa)));
   }
 
   @override

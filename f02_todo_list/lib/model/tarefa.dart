@@ -8,7 +8,6 @@ class Tarefa {
   List<String> comentarios = [];
   DateTime data;
   DateTime data_create = DateTime.now();
-
   Tarefa({
     required this.id,
     required this.titulo,

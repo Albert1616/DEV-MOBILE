@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:f02_todo_list/model/listaTarefas.dart';
 import 'package:flutter/material.dart';
 
 import 'components/form_tarefa.dart';
@@ -64,6 +65,12 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).pop();
   }
 
+  _updateList(List<Tarefa> tarefas_update) {
+    setState(() {
+      this._tarefas = tarefas_update;
+    });
+  }
+
   //Modal
   _openTaskFormModal(BuildContext context) {
     showModalBottomSheet(
@@ -95,7 +102,10 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 20,
             ),
             // lista de tarefas
-            ListaTarefa(listaTarefas: _tarefas, filtroAtual: filtroAtual),
+            ListaTarefa(
+                listaTarefas: _tarefas,
+                filtroAtual: filtroAtual,
+                onUpdate: _updateList),
           ],
         ),
       ),
