@@ -44,6 +44,20 @@ class _MyHomePageState extends State<MyHomePage> {
         comentarios: "comentarios",
         prioridade: Prioridade.ALTA,
         data: DateTime.now()),
+    Tarefa(
+        id: 't1',
+        titulo: 'Jogar',
+        descricao: "descricao",
+        comentarios: "comentarios",
+        prioridade: Prioridade.ALTA,
+        data: DateTime.now()),
+    Tarefa(
+        id: 't1',
+        titulo: 'Jogar',
+        descricao: "descricao",
+        comentarios: "comentarios",
+        prioridade: Prioridade.ALTA,
+        data: DateTime.now()),
   ];
   _novaTarefa(String titulo, String descricao, String comentarios,
       Prioridade prioridade, DateTime data) {

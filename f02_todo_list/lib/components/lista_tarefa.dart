@@ -22,6 +22,13 @@ class ListaTarefa extends StatefulWidget {
 
 class _ListaTarefaState extends State<ListaTarefa> {
   String _prioridadeSelecionada = "Nenhuma";
+  String _filtro = "Nenhuma";
+  DateTime _dataSelecionada = DateTime.now();
+  DateTime _dataCricaoSelecionada = DateTime.now();
+
+  void initialState() {
+    super.initState();
+  }
 
   _corPrioridade(Prioridade priorirade) {
     switch (priorirade) {
@@ -41,35 +48,39 @@ class _ListaTarefaState extends State<ListaTarefa> {
 
   _modelDeleteTarefa(BuildContext context, String id, String titulo) {
     showModalBottomSheet(
-        context: context,
-        builder: (_) {
-          return Container(
-            child: Column(
+      context: context,
+      builder: (_) {
+        return Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text("Deseja mesmo excluir a tarefa: $titulo?"),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("Deseja mesmo excluir a tarefa: $titulo?"),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                          onPressed: () {
-                            _deleteTarefa(id);
-                            Navigator.pop(context);
-                          },
-                          child: Text("Confirmar")),
-                      SizedBox(width: 15),
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text("Cancelar")),
-                    ],
-                  )
-                ]),
-          );
-        });
+                  ElevatedButton(
+                    onPressed: () {
+                      _deleteTarefa(id);
+                      Navigator.pop(context);
+                    },
+                    child: Text("Confirmar"),
+                  ),
+                  SizedBox(width: 15),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Cancelar"),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   _deleteTarefa(String id) {
@@ -93,71 +104,157 @@ class _ListaTarefaState extends State<ListaTarefa> {
     widget.onUpdate(widget.listaTarefas);
   }
 
-  _filtrarPrioridade(String prioridade) {
-    if (prioridade == "Nenhuma") {
-      return widget.listaTarefas;
-    } else {
-      List<Tarefa> tarefas_filtradas = [];
-      for (Tarefa tarefa in widget.listaTarefas) {
-        if (tarefa.prioridade.toString().split(".").last == prioridade) {
-          tarefas_filtradas.add(tarefa);
+  _filtrarPrioridade(String tipo, String prioridade) {
+    List<Tarefa> tarefas_filtradas = [];
+    switch (tipo) {
+      case "Prioridade":
+        tarefas_filtradas = [];
+        if (prioridade == "Nenhuma") {
+          return widget.listaTarefas;
+        } else {
+          for (Tarefa tarefa in widget.listaTarefas) {
+            if (tarefa.prioridade.toString().split(".").last == prioridade) {
+              tarefas_filtradas.add(tarefa);
+            }
+          }
         }
-      }
-      return tarefas_filtradas.isNotEmpty ? tarefas_filtradas : [];
+        break;
+      case "data":
+        tarefas_filtradas = [];
+        for (Tarefa tarefa in widget.listaTarefas) {
+          if (tarefa.data.year == _dataSelecionada.year &&
+              tarefa.data.month == _dataSelecionada.month &&
+              tarefa.data.day == _dataSelecionada.day) {
+            tarefas_filtradas.add(tarefa);
+          }
+        }
+        break;
+      case "dataCriacao":
+        tarefas_filtradas = [];
+        for (Tarefa tarefa in widget.listaTarefas) {
+          if (tarefa.data.year == _dataCricaoSelecionada.year &&
+              tarefa.data.month == _dataCricaoSelecionada.month &&
+              tarefa.data.day == _dataCricaoSelecionada.day) {
+            tarefas_filtradas.add(tarefa);
+          }
+        }
+        break;
+      case "Nenhuma":
+        tarefas_filtradas = widget.listaTarefas;
     }
+    return tarefas_filtradas.isNotEmpty ? tarefas_filtradas : [];
+  }
+
+  _showDatePicker(String dataTipo) {
+    showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2024),
+            lastDate: DateTime(2025))
+        .then((pickedDate) {
+      if (pickedDate == null) {
+        return;
+      }
+      if (dataTipo == "dataExecucao") {
+        setState(() {
+          _dataSelecionada = pickedDate;
+          _filtro = "data";
+        });
+        _filtrarPrioridade("data", _dataSelecionada.toString());
+      } else if (dataTipo == "dataCriacao") {
+        setState(() {
+          _dataCricaoSelecionada = pickedDate;
+          _filtro = "dataCriacao";
+        });
+      }
+    });
   }
 
   _detalhesTarefa(Tarefa tarefa) {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => TarefaDetalhes(
-                tarefa: tarefa,
-                onDelete: _deleteTarefa,
-                onUpdate: _updateTarefa)));
+      context,
+      MaterialPageRoute(
+        builder: (_) => TarefaDetalhes(
+          tarefa: tarefa,
+          onDelete: _deleteTarefa,
+          onUpdate: _updateTarefa,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: 400,
       child: Column(
         children: [
-          Text("Filtrar por prioridade"),
-          DropdownButton<String>(
-            value: _prioridadeSelecionada,
-            items: [
-              DropdownMenuItem(
-                  child: Text("Nenhuma"),
-                  value: "Nenhuma",
-                  onTap: () => {_filtrarPrioridade("Nenhuma")}),
-              DropdownMenuItem(
-                  child: Text("BAIXA"),
-                  value: "BAIXA",
-                  onTap: () => {_filtrarPrioridade("BAIXA")}),
-              DropdownMenuItem(
-                  child: Text("NORMAL"),
-                  value: "NORMAL",
-                  onTap: () => {_filtrarPrioridade("NORMAL")}),
-              DropdownMenuItem(
-                  child: Text("ALTA"),
-                  value: "ALTA",
-                  onTap: () => {_filtrarPrioridade("ALTA")})
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Filtrar por prioridade: "),
+              DropdownButton<String>(
+                value: _prioridadeSelecionada,
+                items: [
+                  DropdownMenuItem(
+                    child: Text("Nenhuma"),
+                    value: "Nenhuma",
+                    onTap: () => {_filtrarPrioridade("Prioridade", "Nenhuma")},
+                  ),
+                  DropdownMenuItem(
+                    child: Text("BAIXA"),
+                    value: "BAIXA",
+                    onTap: () => {_filtrarPrioridade("Prioridade", "BAIXA")},
+                  ),
+                  DropdownMenuItem(
+                    child: Text("NORMAL"),
+                    value: "NORMAL",
+                    onTap: () => {_filtrarPrioridade("Prioridade", "NORMAL")},
+                  ),
+                  DropdownMenuItem(
+                    child: Text("ALTA"),
+                    value: "ALTA",
+                    onTap: () => {_filtrarPrioridade("Prioridade", "ALTA")},
+                  ),
+                ],
+                onChanged: (String? prioridade) {
+                  setState(() {
+                    _prioridadeSelecionada = prioridade!;
+                    _filtro = "Prioridade";
+                  });
+                },
+              )
             ],
-            onChanged: (String? prioridade) {
-              setState(() {
-                _prioridadeSelecionada = prioridade!;
-              });
-            },
+          ),
+          Column(
+            children: [
+              Text("Filtrar por data de execução: "),
+              TextButton(
+                  onPressed: () => {_showDatePicker("dataExecucao")},
+                  child: Text("Selecione a data para filtrar")),
+              Text(
+                  "Data selecionada: ${DateFormat('dd/MM/yyyy').format(_dataSelecionada)}")
+            ],
+          ),
+          Column(
+            children: [
+              Text("Filtrar por data de criação: "),
+              TextButton(
+                  onPressed: () => {_showDatePicker("dataCriacao")},
+                  child: Text("Selecione a data para filtrar")),
+              Text(
+                  "Data selecionada: ${DateFormat('dd/MM/yyyy').format(_dataCricaoSelecionada)}")
+            ],
           ),
           Expanded(
             child: widget.listaTarefas.length > 0
                 ? ListView.builder(
                     itemCount:
-                        _filtrarPrioridade(_prioridadeSelecionada).length,
+                        _filtrarPrioridade(_filtro, _prioridadeSelecionada)
+                            .length,
                     itemBuilder: (context, index) {
-                      final tarefa =
-                          _filtrarPrioridade(_prioridadeSelecionada)[index];
+                      final tarefa = _filtrarPrioridade(
+                          _filtro, _prioridadeSelecionada)[index];
                       return GestureDetector(
                         onTap: (() => {_detalhesTarefa(tarefa)}),
                         child: Card(
@@ -211,7 +308,10 @@ class _ListaTarefaState extends State<ListaTarefa> {
                                 iconSize: 30,
                                 onPressed: () {
                                   _modelDeleteTarefa(
-                                      context, tarefa.id, tarefa.titulo);
+                                    context,
+                                    tarefa.id,
+                                    tarefa.titulo,
+                                  );
                                 },
                                 icon: Icon(Icons.delete),
                               ),
