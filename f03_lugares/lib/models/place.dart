@@ -1,13 +1,13 @@
 class Place {
   final String id;
-  final List<String> paises;
-  final String titulo;
-  final String imagemUrl;
-  final List<String> recomendacoes;
-  final double avaliacao;
-  final double custoMedio;
+  List<String> paises;
+  String titulo;
+  String imagemUrl;
+  List<String> recomendacoes;
+  double avaliacao;
+  double custoMedio;
 
-  const Place({
+  Place({
     required this.id,
     required this.paises,
     required this.titulo,
