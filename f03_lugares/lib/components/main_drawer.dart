@@ -42,25 +42,25 @@ class MainDrawer extends StatelessWidget {
           _createItem(Icons.home, 'Home',
               () => Navigator.of(context).pushReplacementNamed(AppRoutes.HOME)),
           _createItem(
-              Icons.settings,
-              'Configurações',
-              () => Navigator.of(context)
-                  .pushReplacementNamed(AppRoutes.SETTINGS)),
-          _createItem(
-              Icons.place,
-              'Adicionar lugar',
-              () => Navigator.of(context)
-                  .pushReplacementNamed(AppRoutes.FORM_PLACE)),
-          _createItem(
               Icons.map,
               'Países',
               () => Navigator.of(context)
                   .pushReplacementNamed(AppRoutes.COUNTRIES)),
           _createItem(
-              Icons.place_sharp,
+              Icons.location_on,
               'Lugares',
               () =>
                   Navigator.of(context).pushReplacementNamed(AppRoutes.PLACES)),
+          _createItem(
+              Icons.add_location_alt,
+              'Adicionar lugar',
+              () => Navigator.of(context)
+                  .pushReplacementNamed(AppRoutes.ADD_PLACE)),
+          _createItem(
+              Icons.settings,
+              'Configurações',
+              () => Navigator.of(context)
+                  .pushReplacementNamed(AppRoutes.SETTINGS)),
         ],
       ),
     );

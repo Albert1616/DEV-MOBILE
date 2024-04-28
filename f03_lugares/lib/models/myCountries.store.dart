@@ -60,6 +60,15 @@ abstract class _MyCountriesModelX with Store {
   }
 
   @action
+  void edit(Country country) {
+    int index = countries.indexWhere((c) => c.id == country.id);
+    if (index != -1) {
+      countries[index].title = country.title;
+      countries[index].color = country.color;
+    }
+  }
+
+  @action
   void remove(Country country) {
     this.countries.remove(country);
   }

@@ -1,4 +1,5 @@
 import 'package:f03_lugares/components/form_country.dart';
+import 'package:f03_lugares/components/form_edit_country.dart';
 import 'package:f03_lugares/components/main_drawer.dart';
 import 'package:f03_lugares/models/country.dart';
 import 'package:f03_lugares/models/myCountries.store.dart';
@@ -19,6 +20,14 @@ class _ManageCountriesState extends State<ManageCountries> {
         context: context,
         builder: (_) {
           return formCountry();
+        });
+  }
+
+  _openEditModal(BuildContext context, Country country) {
+    showModalBottomSheet(
+        context: context,
+        builder: (_) {
+          return formEditCountry(country: country);
         });
   }
 
@@ -72,7 +81,10 @@ class _ManageCountriesState extends State<ManageCountries> {
               ),
               Row(
                 children: [
-                  IconButton(onPressed: () => {}, icon: Icon(Icons.edit)),
+                  IconButton(
+                      onPressed: () =>
+                          {_openEditModal(context, country), setState(() {})},
+                      icon: Icon(Icons.edit)),
                   IconButton(
                       onPressed: () => {_removeCountry(country)},
                       icon: Icon(Icons.delete))

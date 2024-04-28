@@ -12,7 +12,6 @@ import 'package:f03_lugares/screens/place_detail_screen.dart';
 import 'package:f03_lugares/screens/settings_screen.dart';
 import 'package:f03_lugares/screens/tabs_screen.dart';
 import 'package:f03_lugares/utils/app_routes.dart';
-import 'package:f03_lugares/components/formPlace.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -56,7 +55,7 @@ class _MyAppState extends State<MyApp> {
             AppRoutes.COUNTRY_PLACES: (ctx) => CountryPlacesScreen(),
             AppRoutes.PLACES_DETAIL: (ctx) => PlaceDetailScreen(),
             AppRoutes.SETTINGS: (ctx) => SettingsScreen(),
-            AppRoutes.FORM_PLACE: (ctx) => AddForm(),
+            AppRoutes.ADD_PLACE: (ctx) => AddPlace(),
             AppRoutes.COUNTRIES: (ctx) => ManageCountries(),
             AppRoutes.PLACES: (ctx) => ManagePlaces()
           },

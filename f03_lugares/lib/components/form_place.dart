@@ -1,36 +1,27 @@
-import 'dart:ffi';
-
 import 'package:f03_lugares/models/country.dart';
 import 'package:f03_lugares/models/myCountries.store.dart';
 import 'package:f03_lugares/models/myPlaces.store.dart';
 import 'package:f03_lugares/models/place.dart';
+import 'package:f03_lugares/screens/add_place.dart';
+import 'package:f03_lugares/screens/manage_places_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-class FormEditPlace extends StatefulWidget {
-  Place place;
-  FormEditPlace({required this.place});
-
+class FormAddPlace extends StatefulWidget {
   @override
-  State<FormEditPlace> createState() => _FormEditPlaceState();
+  State<FormAddPlace> createState() => _FormAddPlaceState();
 }
 
-class _FormEditPlaceState extends State<FormEditPlace> {
+class _FormAddPlaceState extends State<FormAddPlace> {
   final _titleController = new TextEditingController();
   final _imgUrlController = new TextEditingController();
   final _avaliacaoController = new TextEditingController();
   final _custoMedio = new TextEditingController();
   final _novaRecomendacaoController = new TextEditingController();
 
-  void initState() {
-    super.initState();
-    _titleController.text = widget.place.titulo;
-    _imgUrlController.text = widget.place.imagemUrl;
-    _avaliacaoController.text = widget.place.avaliacao.toString();
-    _custoMedio.text = widget.place.custoMedio.toString();
-  }
-
+  List<String> countries = [];
+  List<String> recommedactions = [];
   String DropdownValue = '';
 
   @override
@@ -44,37 +35,37 @@ class _FormEditPlaceState extends State<FormEditPlace> {
       DropdownValue = list_countries[0].id;
     }
 
-    _obterCountries(List<Country> countries) {
-      countries = countries
-          .where((country) => widget.place.paises.contains(country.id))
-          .toList();
-      return countries;
-    }
-
     _addCountry(String idCountry) {
       setState(() {
-        widget.place.paises.add(idCountry);
+        countries.add(idCountry);
         DropdownValue = list_countries[0].id;
       });
     }
 
     _removeCountry(String idCoutry) {
       setState(() {
-        widget.place.paises.remove(idCoutry);
+        countries.remove(idCoutry);
       });
     }
 
     _addRecommendation(String recommendation) {
       setState(() {
-        widget.place.recomendacoes.add(recommendation);
+        recommedactions.add(recommendation);
         _novaRecomendacaoController.text = '';
       });
     }
 
     _removeRecommendation(String recommendation) {
       setState(() {
-        widget.place.recomendacoes.remove(recommendation);
+        recommedactions.remove(recommendation);
       });
+    }
+
+    _obterCountries(List<Country> lst_countries) {
+      lst_countries = lst_countries
+          .where((country) => countries.contains(country.id))
+          .toList();
+      return lst_countries;
     }
 
     _onChangeValue(String newValue) {
@@ -83,24 +74,39 @@ class _FormEditPlaceState extends State<FormEditPlace> {
       });
     }
 
-    _addPlace() {
-      if (!_titleController.text.isEmpty) {
-        widget.place.titulo = _titleController.text;
-      }
-      if (!_avaliacaoController.text.isEmpty) {
-        widget.place.avaliacao = double.parse(_avaliacaoController.text);
-      }
-      if (!_custoMedio.text.isEmpty) {
-        widget.place.custoMedio = double.parse(_custoMedio.text);
-      }
-      if (!_imgUrlController.text.isEmpty) {
-        widget.place.imagemUrl = _imgUrlController.text;
-      }
-      myPlacesModelX.add(widget.place);
-      Navigator.pop(context);
-    }
-
     List<Country> countries_place = _obterCountries(list_countries);
+
+    _addPlace() {
+      if (!_titleController.text.isEmpty &&
+          !_avaliacaoController.text.isEmpty &&
+          !_custoMedio.text.isEmpty &&
+          !_imgUrlController.text.isEmpty &&
+          !countries.isEmpty) {
+        int index = myPlacesModelX.getPlaces.length + 2;
+        Place place = new Place(
+            id: 'p' + index.toString(),
+            paises: countries,
+            titulo: _titleController.text,
+            imagemUrl: _imgUrlController.text,
+            recomendacoes: recommedactions,
+            avaliacao: double.parse(_avaliacaoController.text),
+            custoMedio: double.parse(_custoMedio.text));
+        myPlacesModelX.add(place);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Lugar adicionado com sucesso!",
+                style: TextStyle(color: Colors.red.shade600))));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ManagePlaces(),
+          ),
+        );
+      } else {
+        return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Preencha todos os campos!",
+                style: TextStyle(color: Colors.red.shade600))));
+      }
+    }
 
     return SingleChildScrollView(
       reverse: true,
@@ -137,7 +143,7 @@ class _FormEditPlaceState extends State<FormEditPlace> {
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
               ),
               SizedBox(height: 10),
-              Text("Países"),
+              Text("Países - adicione os países do lugar"),
               Column(
                 children: countries_place
                     .map((country) => ListTile(
@@ -178,7 +184,7 @@ class _FormEditPlaceState extends State<FormEditPlace> {
               SizedBox(height: 10),
               Text("Recomendações "),
               Column(
-                children: widget.place.recomendacoes
+                children: recommedactions
                     .map((recomedacao) => ListTile(
                           leading: Icon(Icons.check_circle),
                           title: Text(recomedacao,
@@ -217,7 +223,7 @@ class _FormEditPlaceState extends State<FormEditPlace> {
                   onPressed: () {
                     _addPlace();
                   },
-                  child: Text("Salvar alterações"))
+                  child: Text("Adicionar lugar"))
             ],
           ),
         ),
