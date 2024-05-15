@@ -33,6 +33,14 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
                 );
               },
               icon: Icon(Icons.add)),
+          IconButton(
+            onPressed: (){
+              Navigator.of(context).pushNamed(
+                AppRoutes.CART
+              );
+            },
+            Icon: Icon(Icons.cart)
+          )
           PopupMenuButton(
             icon: Icon(Icons.more_vert),
             itemBuilder: (_) => [

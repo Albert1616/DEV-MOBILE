@@ -30,6 +30,8 @@ class MyApp extends StatelessWidget {
         routes: {
           AppRoutes.PRODUCT_DETAIL: (ctx) => ProductDetailPage(),
           AppRoutes.PRODUCT_FORM: (context) => ProductFormPage(),
+          AppRoutes.CART: (context) => Cart(),
+          AppRoutes.PRODUCTS: (context) => Product_Management();
         },
         debugShowCheckedModeBanner: false,
       ),
