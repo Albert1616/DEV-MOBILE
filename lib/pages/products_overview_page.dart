@@ -34,13 +34,10 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
               },
               icon: Icon(Icons.add)),
           IconButton(
-            onPressed: (){
-              Navigator.of(context).pushNamed(
-                AppRoutes.CART
-              );
-            },
-            Icon: Icon(Icons.cart)
-          )
+              onPressed: () {
+                Navigator.of(context).pushNamed(AppRoutes.CART);
+              },
+              icon: Icon(Icons.car_crash)),
           PopupMenuButton(
             icon: Icon(Icons.more_vert),
             itemBuilder: (_) => [

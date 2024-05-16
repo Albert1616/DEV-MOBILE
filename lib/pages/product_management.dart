@@ -1,3 +1,10 @@
+/* import 'package:flutter/material.dart';
+
+import 'package:f05_eshop/model/product.dart';
+import 'package:f05_eshop/model/product_list.dart';
+import 'package:f05_eshop/utils/app_routes.dart';
+import 'package:provider/provider.dart';
+
 class Product_Management extends StatelessWidget {
   const Product_Management({super.key});
 
@@ -29,4 +36,4 @@ class Product_Management extends StatelessWidget {
       ),
     );
   }
-}
+} */

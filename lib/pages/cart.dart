@@ -18,30 +18,31 @@ class _CartState extends State<Cart> {
   Widget build(BuildContext context) {
     final cartModelX = Provider.of<CartModelX>(context);
 
-    _updateQtd(String id, String type){
-      ItemCart item = cartModelX.getProducts.firstWhere((item) => item.product.id == id);
-      if(type == 'increment'){
-        setState((){
+    _updateQtd(String id, String type) {
+      ItemCart item =
+          cartModelX.getProducts.firstWhere((item) => item.product.id == id);
+      if (type == 'increment') {
+        setState(() {
           item.quantidade++;
           cartModelX.calcTotal();
-        })
-      }else if(type == 'decrement'){
-        setState((){
+        });
+      } else if (type == 'decrement') {
+        setState(() {
           item.quantidade--;
           cartModelX.calcTotal();
-        })
+        });
       }
     }
 
-    _removeItem(String id){
-      ItemCart item = cartModelX.getProducts.firstWhere((item) => item.product.id == id);
+    _removeItem(String id) {
+      ItemCart item =
+          cartModelX.getProducts.firstWhere((item) => item.product.id == id);
       cartModelX.getProducts.remove(item);
       cartModelX.calcTotal();
     }
 
-
-  _createCard(ItemCart item){
-  return Card(
+    _createCard(ItemCart item) {
+      return Card(
         child: Padding(
           padding: EdgeInsets.all(5),
           child: Row(
@@ -61,22 +62,20 @@ class _CartState extends State<Cart> {
                           {_updateQtd(item.product.id, 'decrement')},
                       icon: Icon(Icons.remove)),
                   IconButton(
-                      onPressed: () => {_updateQtd(item.product.id, 'increment')},
+                      onPressed: () =>
+                          {_updateQtd(item.product.id, 'increment')},
                       icon: Icon(Icons.add)),
                   SizedBox(width: 15),
                   IconButton(
-                    onPressed:()=>{
-
-                    },
-                    icon: Icon(Icons.trash)
-                  )
+                      onPressed: () => {}, icon: Icon(Icons.delete_forever))
                 ],
               )
             ],
           ),
         ),
       );
-  }
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Carrinho'),
@@ -91,7 +90,7 @@ class _CartState extends State<Cart> {
                           return _createCard(cartModelX.getProducts[index]);
                         },
                       )),
-              Text("Total: " + cartModelX.total.toString() + "R$");
+              Text('Total: ${cartModelX.total.toString()} R\$')
             ])));
   }
 }

@@ -1,3 +1,4 @@
+import 'package:f05_eshop/pages/cart.dart';
 import 'package:f05_eshop/pages/product_detail_page.dart';
 import 'package:f05_eshop/pages/product_form_page.dart';
 import 'package:f05_eshop/pages/products_overview_page.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.PRODUCT_DETAIL: (ctx) => ProductDetailPage(),
           AppRoutes.PRODUCT_FORM: (context) => ProductFormPage(),
           AppRoutes.CART: (context) => Cart(),
-          AppRoutes.PRODUCTS: (context) => Product_Management();
+          //AppRoutes.PRODUCTS: (context) => Product_Management();
         },
         debugShowCheckedModeBanner: false,
       ),

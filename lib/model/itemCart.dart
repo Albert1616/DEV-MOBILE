@@ -1,9 +1,8 @@
-class ItemCart{
-  Product product;
-  Integer quantidade;
+import 'package:f05_eshop/model/product.dart';
 
-  ItemCart({
-    required this.product,
-    required this.quantidade;
-  })
+class ItemCart {
+  Product product;
+  int quantidade;
+
+  ItemCart({required this.product, required this.quantidade});
 }
