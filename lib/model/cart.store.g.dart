@@ -59,7 +59,7 @@ mixin _$CartModelX on _CartModelX, Store {
   }
 
   @override
-  void calcTotal() {
+  double calcTotal() {
     final _$actionInfo = _$_CartModelXActionController.startAction(
         name: '_CartModelX.calcTotal');
     try {

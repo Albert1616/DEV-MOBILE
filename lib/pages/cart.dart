@@ -1,6 +1,6 @@
 import 'package:f05_eshop/model/cart.store.dart';
-import 'package:f05_eshop/model/cart.store.dart';
 import 'package:f05_eshop/model/itemCart.dart';
+import 'package:f05_eshop/model/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
@@ -18,19 +18,23 @@ class _CartState extends State<Cart> {
   Widget build(BuildContext context) {
     final cartModelX = Provider.of<CartModelX>(context);
 
+    double price = cartModelX.calcTotal();
+
     _updateQtd(String id, String type) {
       ItemCart item =
           cartModelX.getProducts.firstWhere((item) => item.product.id == id);
       if (type == 'increment') {
         setState(() {
           item.quantidade++;
-          cartModelX.calcTotal();
+          price = cartModelX.calcTotal();
         });
       } else if (type == 'decrement') {
-        setState(() {
-          item.quantidade--;
-          cartModelX.calcTotal();
-        });
+        if (item.quantidade > 0) {
+          setState(() {
+            item.quantidade--;
+            cartModelX.calcTotal();
+          });
+        }
       }
     }
 
@@ -38,7 +42,10 @@ class _CartState extends State<Cart> {
       ItemCart item =
           cartModelX.getProducts.firstWhere((item) => item.product.id == id);
       cartModelX.getProducts.remove(item);
-      cartModelX.calcTotal();
+
+      setState(() {
+        price = cartModelX.calcTotal();
+      });
     }
 
     _createCard(ItemCart item) {
@@ -54,7 +61,7 @@ class _CartState extends State<Cart> {
               ),
               Row(
                 children: [
-                  Text(item.product.price.toString()),
+                  Text('${item.product.price.toString()} R\$'),
                   SizedBox(width: 15),
                   Text(item.quantidade.toString() + 'X'),
                   IconButton(
@@ -67,7 +74,8 @@ class _CartState extends State<Cart> {
                       icon: Icon(Icons.add)),
                   SizedBox(width: 15),
                   IconButton(
-                      onPressed: () => {}, icon: Icon(Icons.delete_forever))
+                      onPressed: () => {_removeItem(item.product.id)},
+                      icon: Icon(Icons.delete_forever))
                 ],
               )
             ],
@@ -84,13 +92,17 @@ class _CartState extends State<Cart> {
             padding: EdgeInsets.all(15),
             child: Column(children: [
               Observer(
-                  builder: (context) => ListView.builder(
-                        itemCount: cartModelX.getProducts.length,
-                        itemBuilder: (ctx, index) {
-                          return _createCard(cartModelX.getProducts[index]);
-                        },
+                  builder: (context) => Expanded(
+                        child: ListView.builder(
+                          itemCount: cartModelX.getProducts.length,
+                          itemBuilder: (ctx, index) {
+                            return Wrap(children: [
+                              _createCard(cartModelX.getProducts[index])
+                            ]);
+                          },
+                        ),
                       )),
-              Text('Total: ${cartModelX.total.toString()} R\$')
+              Text('Total: ${price.toStringAsPrecision(6)} R\$')
             ])));
   }
 }

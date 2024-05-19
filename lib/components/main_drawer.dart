@@ -28,9 +28,9 @@ class MainDrawer extends StatelessWidget {
           Container(
             height: 120,
             width: double.infinity,
-            padding: EdgeInsets.all(40),
+            padding: EdgeInsets.all(20),
             color: Theme.of(context).colorScheme.secondary,
-            alignment: Alignment.bottomRight,
+            alignment: Alignment.bottomLeft,
             child: Text(
               'Menu',
               style: TextStyle(
@@ -40,7 +40,7 @@ class MainDrawer extends StatelessWidget {
             ),
           ),
           _createItem(
-              Icons.settings,
+              Icons.card_giftcard,
               'Produtos',
               () => Navigator.of(context)
                   .pushReplacementNamed(AppRoutes.PRODUCTS)),
