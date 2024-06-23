@@ -27,4 +27,15 @@ class Product with ChangeNotifier {
     isCartShop = !isCartShop;
     notifyListeners();
   }
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+        id: json['id'],
+        title: json['title'],
+        description: json['description'],
+        price: json['price'],
+        imageUrl: json['imageUrl'],
+        isFavorite: json['isFavorite'],
+        isCartShop: json['isCartShop']);
+  }
 }
