@@ -13,20 +13,44 @@ class Products extends StatefulWidget {
 class _ProductsState extends State<Products> {
   late Future<List<Product>> lst_produtos;
 
-  final _baseURL =
-      'https://mini-projeto-iv---flutter-default-rtdb.firebaseio.com/';
-
   @override
   void initState() {
     super.initState();
     lst_produtos = ProdutoController.getProducts();
   }
 
+  _updateScreen(){
+    setState(() {
+      lst_produtos = ProdutoController.getProducts();
+    });
+  }
+
+  _addProduct(Product produto){
+    ProdutoController.saveProduct(produto);
+    _updateScreen();
+  }
+
+  _deleteProduct(String id){
+    ProdutoController.deleteProduct(id);
+    _updateScreen();
+
+  }
+
   _createCardProduct(Product product) {
     return ListTile(
-      leading: Image.network(product.imageUrl),
+      leading: Image.network(
+        product.imageUrl,
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(Icons.card_giftcard);
+        },
+      ),
       title: Text(product.title),
-      trailing: Text(product.price.toString()),
+      subtitle: Text(product.price.toString()),
+      trailing: IconButton(
+        onPressed: (){_deleteProduct(product.id);},
+        icon: Icon(Icons.delete),
+      ),
+      
     );
   }
 
@@ -34,7 +58,7 @@ class _ProductsState extends State<Products> {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return FormProduct();
+          return FormProduct(onSubmit: _addProduct);
         });
   }
 
@@ -49,9 +73,9 @@ class _ProductsState extends State<Products> {
           child: FutureBuilder<List<Product>>(
             future: lst_produtos,
             builder: ((context, snapshot) {
-              if (snapshot.hasError) {
+              if (snapshot.hasError || (snapshot.hasData && snapshot.data!.isEmpty)) {
                 return const Center(
-                  child: Text('ERRO'),
+                  child: Text('Não há produtos cadastrados!'),
                 );
               } else if (snapshot.hasData) {
                 return ListView.builder(

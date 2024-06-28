@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:f05_eshop/model/product.dart'; // Importe o modelo Product
 
 class FormProduct extends StatefulWidget {
-  const FormProduct({super.key});
+  Function(Product produto) onSubmit;
+  FormProduct({required this.onSubmit});
 
   @override
   _FormProductState createState() => _FormProductState();
@@ -30,7 +31,7 @@ class _FormProductState extends State<FormProduct> {
     _priceController.clear();
     _imageUrlController.clear();
 
-    ProdutoController.saveProduct(newProduct);
+    widget.onSubmit(newProduct);
 
     // Exemplo de feedback ao usuário após a submissão
     ScaffoldMessenger.of(context).showSnackBar(

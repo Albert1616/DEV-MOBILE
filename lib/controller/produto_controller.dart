@@ -8,11 +8,22 @@ class ProdutoController {
 
   static Future<List<Product>> getProducts() async {
     final response = await http.get(Uri.parse(
-        'https://mini-projeto-iv---flutter-default-rtdb.firebaseio.com/Produto'));
+        'https://mini-projeto-iv---flutter-default-rtdb.firebaseio.com/produto.json'));
+
+    List<Product> produtos = [];
 
     if (response.statusCode == 200) {
-      final lst = jsonDecode(response.body).cast<Map<String, dynamic>>();
-      return lst.map<Product>((item) => Product.fromJson(item)).toList();
+      final Map<String, dynamic> jbody = jsonDecode(response.body);
+      jbody.forEach((key, value){
+        Product produto = new Product(
+          id: key, title: value['title'], 
+          description: value['description'], price: value['price'], 
+          imageUrl: value['imageUrl']);
+        produtos.add(produto);
+      });
+
+      return produtos;
+      
     }
 
     throw Exception("Lista não pode ser encontrada!");
@@ -40,6 +51,18 @@ class ProdutoController {
     } else {
       throw Exception("ERRO não foi possível salvar o produto!");
     }
+  }
+
+  static Future<Product> deleteProduct(String id) async{
+    final response = await http.delete(
+      Uri.parse('https://mini-projeto-iv---flutter-default-rtdb.firebaseio.com/produto/$id.json')
+    );
+
+    if(response.statusCode == 200){
+      return Product.fromJson(jsonDecode(response.body));
+    }
+
+    throw Exception("ERRO não foi possível deletar o produto");
   }
 
   static Future<Product> updateProduct(Product product) async {
