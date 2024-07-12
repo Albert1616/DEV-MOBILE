@@ -1,9 +1,11 @@
 import 'package:f05_eshop/model/cart.store.dart';
+import 'package:f05_eshop/model/user.store.dart';
 import 'package:f05_eshop/pages/cart.dart';
 import 'package:f05_eshop/pages/product_detail_page.dart';
 import 'package:f05_eshop/pages/product_form_page.dart';
 import 'package:f05_eshop/pages/products.dart';
 import 'package:f05_eshop/pages/products_overview_page.dart';
+import 'package:f05_eshop/pages/user_form.page.dart';
 import 'package:f05_eshop/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +25,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<CartModelX>(create: (context) => CartModelX()),
+        Provider<UserModelX>(create: (context)=>UserModelX())
       ],
       child: ChangeNotifierProvider(
         create: (context) => ProductList(),
@@ -38,7 +41,8 @@ class MyApp extends StatelessWidget {
               AppRoutes.PRODUCT_DETAIL: (ctx) => ProductDetailPage(),
               AppRoutes.PRODUCT_FORM: (context) => ProductFormPage(),
               AppRoutes.CART: (context) => Cart(),
-              AppRoutes.PRODUCTS: (context) => Products()
+              AppRoutes.PRODUCTS: (context) => Products(),
+              AppRoutes.USER_FORM: (context) => UserFormPage()
               //AppRoutes.PRODUCTS: (context) => Product_Management();
             },
             debugShowCheckedModeBanner: false),

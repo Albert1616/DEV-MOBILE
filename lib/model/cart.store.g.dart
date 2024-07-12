@@ -70,6 +70,17 @@ mixin _$CartModelX on _CartModelX, Store {
   }
 
   @override
+  ItemCart? seach(String id) {
+    final _$actionInfo =
+        _$_CartModelXActionController.startAction(name: '_CartModelX.seach');
+    try {
+      return super.seach(id);
+    } finally {
+      _$_CartModelXActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 products: ${products},
