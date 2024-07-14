@@ -107,11 +107,9 @@ class UserController {
     );
 
     if (response.statusCode == 200) {
-      print("200 OK");
       List<Pedido> pedidos = [];
 
       if (response.body != null) {
-        print("Body não é nulo");
         List<dynamic> jbody = jsonDecode(response.body);
 
         jbody.forEach((item) {

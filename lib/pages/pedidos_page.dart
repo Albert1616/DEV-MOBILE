@@ -2,6 +2,7 @@ import 'package:f05_eshop/components/main_drawer.dart';
 import 'package:f05_eshop/controller/user_controller.dart';
 import 'package:f05_eshop/model/pedido.dart';
 import 'package:f05_eshop/model/user.store.dart';
+import 'package:f05_eshop/pages/pedido_detail_page.dart';
 import 'package:f05_eshop/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -98,7 +99,13 @@ class _PedidosPageState extends State<PedidosPage> {
         title: Text('Pedido $index'),
         subtitle: Text(pedido.data.toString().substring(0, 10)),
         trailing: Text('${pedido.total.toString()} RS'),
-        onTap: () {},
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) {
+              return PedidoDetail(pedido: pedido);
+            },
+          ));
+        },
       );
     }
 
@@ -146,13 +153,10 @@ class _PedidosPageState extends State<PedidosPage> {
                     future: pedidos,
                     builder: ((context, snapshot) {
                       if (snapshot.hasError) {
-                        print(snapshot.error);
                         return Center(
                           child: Text("Você ainda não fez nenhum pedido!"),
                         );
                       } else if (snapshot.hasData) {
-                        print("Tem pedidos!");
-                        print(userModelX.currentUser!.id);
                         return ListView.builder(
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {

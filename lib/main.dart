@@ -37,8 +37,9 @@ class MyApp extends StatelessWidget {
                 //primarySwatch: Colors.pink,
                 colorScheme: ThemeData().copyWith().colorScheme.copyWith(
                     primary: Colors.pink, secondary: Colors.orangeAccent)),
-            home: ProductsOverviewPage(),
+            initialRoute: '/',
             routes: {
+              AppRoutes.HOME: (ctx) => ProductsOverviewPage(),
               AppRoutes.PRODUCT_DETAIL: (ctx) => ProductDetailPage(),
               AppRoutes.PRODUCT_FORM: (context) => ProductFormPage(),
               AppRoutes.CART: (context) => Cart(),

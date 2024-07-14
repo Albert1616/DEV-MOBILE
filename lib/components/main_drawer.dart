@@ -39,6 +39,8 @@ class MainDrawer extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary),
             ),
           ),
+          _createItem(Icons.home, "Home",
+              () => Navigator.of(context).pushNamed(AppRoutes.HOME)),
           _createItem(
               Icons.card_giftcard,
               'Produtos',
