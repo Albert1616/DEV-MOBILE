@@ -6,24 +6,29 @@ part 'user.store.g.dart';
 
 class UserModelX = _UserModelx with _$UserModelX;
 
-abstract class _UserModelx with Store{
+abstract class _UserModelx with Store {
   @observable
   bool isLogin = false;
+
+  @observable
+  User? currentUser;
 
   @computed
   bool get getIsLogin => this.isLogin;
 
   @action
-  Future<bool> login(String email, String password) async{
-    bool existUser = await UserController.existUser(email, password);
-    if(existUser){
+  Future<bool> login(String email, String password) async {
+    User user = await UserController.existUser(email, password);
+    if (user != null) {
       isLogin = true;
+      currentUser = user;
+      return true;
     }
-    return existUser;
+    return false;
   }
 
   @action
-  void Logoff(){
+  void Logoff() {
     this.isLogin = false;
   }
 }

@@ -30,12 +30,24 @@ class Product with ChangeNotifier {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-        id: json['id'],
-        title: json['title'],
-        description: json['description'],
-        price: json['price'],
-        imageUrl: json['imageUrl'],
-        isFavorite: json['isFavorite'],
-        isCartShop: json['isCartShop']);
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      price: json['price'] != null ? json['price'].toDouble() : 0.0,
+      imageUrl: json['imageUrl'] ?? '',
+      isFavorite: json['isFavorite'] ?? false,
+      isCartShop: json['isCartShop'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'description': description,
+      'price': price,
+      'imageUrl': imageUrl,
+      'isFavorite': isFavorite,
+      'isCartShop': isCartShop
+    };
   }
 }

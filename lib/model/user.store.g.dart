@@ -33,6 +33,22 @@ mixin _$UserModelX on _UserModelx, Store {
     });
   }
 
+  late final _$currentUserAtom =
+      Atom(name: '_UserModelx.currentUser', context: context);
+
+  @override
+  User? get currentUser {
+    _$currentUserAtom.reportRead();
+    return super.currentUser;
+  }
+
+  @override
+  set currentUser(User? value) {
+    _$currentUserAtom.reportWrite(value, super.currentUser, () {
+      super.currentUser = value;
+    });
+  }
+
   late final _$loginAsyncAction =
       AsyncAction('_UserModelx.login', context: context);
 
@@ -41,10 +57,25 @@ mixin _$UserModelX on _UserModelx, Store {
     return _$loginAsyncAction.run(() => super.login(email, password));
   }
 
+  late final _$_UserModelxActionController =
+      ActionController(name: '_UserModelx', context: context);
+
+  @override
+  void Logoff() {
+    final _$actionInfo =
+        _$_UserModelxActionController.startAction(name: '_UserModelx.Logoff');
+    try {
+      return super.Logoff();
+    } finally {
+      _$_UserModelxActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 isLogin: ${isLogin},
+currentUser: ${currentUser},
 getIsLogin: ${getIsLogin}
     ''';
   }

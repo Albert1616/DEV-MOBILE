@@ -64,4 +64,10 @@ abstract class _CartModelX with Store {
       return null;
     }
   }
+
+  @action
+  void clear() {
+    this.products.clear();
+    this.total = 0;
+  }
 }

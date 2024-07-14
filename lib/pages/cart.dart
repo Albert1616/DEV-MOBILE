@@ -1,6 +1,10 @@
+import 'package:f05_eshop/controller/user_controller.dart';
 import 'package:f05_eshop/model/cart.store.dart';
 import 'package:f05_eshop/model/itemCart.dart';
+import 'package:f05_eshop/model/pedido.dart';
 import 'package:f05_eshop/model/product.dart';
+import 'package:f05_eshop/model/user.dart';
+import 'package:f05_eshop/model/user.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
@@ -17,6 +21,7 @@ class _CartState extends State<Cart> {
   @override
   Widget build(BuildContext context) {
     final cartModelX = Provider.of<CartModelX>(context);
+    final userModelX = Provider.of<UserModelX>(context);
 
     double price = cartModelX.calcTotal();
 
@@ -84,6 +89,26 @@ class _CartState extends State<Cart> {
       );
     }
 
+    _createPedido() {
+      if (userModelX.currentUser != null) {
+        Pedido pedido = new Pedido(
+            produtos: cartModelX.getProducts.toList(),
+            total: price,
+            data: DateTime.now());
+        User user = userModelX.currentUser!;
+        UserController.addPedido(user.email, user.password, pedido);
+        cartModelX.clear();
+        Navigator.pushNamed(context, '/pedidos');
+      } else {
+        setState(() {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Você precisa estar logado para fazer pedidos"),
+            backgroundColor: Colors.red,
+          ));
+        });
+      }
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Carrinho'),
@@ -102,7 +127,15 @@ class _CartState extends State<Cart> {
                           },
                         ),
                       )),
-              Text('Total: ${price.toStringAsPrecision(6)} R\$')
+              Text('Total: ${price.toStringAsPrecision(6)} R\$'),
+              SizedBox(height: 15),
+              ElevatedButton(
+                onPressed: () {
+                  _createPedido();
+                },
+                child: Text("Finalizar compra"),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
+              )
             ])));
   }
 }

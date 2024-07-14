@@ -81,6 +81,17 @@ mixin _$CartModelX on _CartModelX, Store {
   }
 
   @override
+  void clear() {
+    final _$actionInfo =
+        _$_CartModelXActionController.startAction(name: '_CartModelX.clear');
+    try {
+      return super.clear();
+    } finally {
+      _$_CartModelXActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 products: ${products},
