@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:f05_eshop/model/itemCart.dart';
 import 'package:f05_eshop/model/pedido.dart';
+import 'package:f05_eshop/model/product.dart';
 import 'package:f05_eshop/model/user.dart';
 import 'package:http/http.dart' as http;
 
@@ -105,16 +107,32 @@ class UserController {
     );
 
     if (response.statusCode == 200) {
+      print("200 OK");
       List<Pedido> pedidos = [];
 
       if (response.body != null) {
+        print("Body não é nulo");
         List<dynamic> jbody = jsonDecode(response.body);
 
         jbody.forEach((item) {
-          Pedido pedido = new Pedido(
-              produtos: item['produtos'],
-              total: item['total'],
-              data: item['data']);
+          List<ItemCart> items = [];
+          item['produtos'].forEach((item) {
+            Product produto = new Product(
+                id: id,
+                title: item['product']['title'],
+                description: item['product']['description'],
+                price: item['product']['price'],
+                imageUrl: item['product']['imageUrl'],
+                isCartShop: item['product']['isCartShop'],
+                isFavorite: item['product']['isFavorite']);
+            ItemCart itemCart =
+                new ItemCart(product: produto, quantidade: item['quantidade']);
+
+            items.add(itemCart);
+          });
+          DateTime data = DateTime.parse(item['data']);
+          Pedido pedido =
+              new Pedido(produtos: items, total: item['total'], data: data);
 
           pedidos.add(pedido);
         });
