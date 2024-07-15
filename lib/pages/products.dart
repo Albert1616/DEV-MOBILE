@@ -25,7 +25,7 @@ class _ProductsState extends State<Products> {
     });
   }
 
-  _addProduct(Product produto){
+  _addProduct(Product produto, String? id){
     ProdutoController.saveProduct(produto);
     _updateScreen();
   }
@@ -36,22 +36,48 @@ class _ProductsState extends State<Products> {
 
   }
 
-  _createCardProduct(Product product) {
-    return ListTile(
+ Widget _createCardProduct(BuildContext context, Product product) {
+  return Card(
+    child: ListTile(
       leading: Image.network(
         product.imageUrl,
+        width: 50,  // Defina um tamanho fixo para a imagem
+        height: 50,
         errorBuilder: (context, error, stackTrace) {
-          return Icon(Icons.card_giftcard);
+          return Icon(Icons.error);  // Ícone de erro padrão em caso de falha ao carregar a imagem
         },
       ),
       title: Text(product.title),
       subtitle: Text(product.price.toString()),
-      trailing: IconButton(
-        onPressed: (){_deleteProduct(product.id);},
-        icon: Icon(Icons.delete),
+      trailing: SizedBox(
+        width: 100,  // Largura fixa para o widget de ação
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            IconButton(
+              onPressed: () {
+                _openFormModalEdit(context, product);
+              },
+              icon: Icon(Icons.edit),
+            ),
+            IconButton(
+              onPressed: () {
+                _deleteProduct(product.id);
+              },
+              icon: Icon(Icons.delete),
+            ),
+          ],
+        ),
       ),
-      
-    );
+    ),
+  );
+}
+
+
+  _editProduct(Product produto, String? newId){
+    produto.id = newId!;
+    ProdutoController.updateProduct(produto);
+    _updateScreen();
   }
 
   _openFormModal(BuildContext context) {
@@ -62,11 +88,24 @@ class _ProductsState extends State<Products> {
         });
   }
 
+  _openFormModalEdit(BuildContext context, Product produto){
+    showModalBottomSheet(
+      context: context, 
+      builder: (context){
+        return FormProduct(onSubmit: _editProduct, produto:produto);
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Produtos"),
+        actions: [
+          IconButton(onPressed: (){
+            setState(() {});
+          }, icon: Icon(Icons.refresh))
+        ],
       ),
       body: Padding(
           padding: EdgeInsets.all(10),
@@ -81,7 +120,7 @@ class _ProductsState extends State<Products> {
                 return ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    return _createCardProduct(snapshot.data![index]);
+                    return _createCardProduct(context,snapshot.data![index]);
                   },
                 );
               } else {

@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:f05_eshop/model/product.dart'; // Importe o modelo Product
 
 class FormProduct extends StatefulWidget {
-  Function(Product produto) onSubmit;
-  FormProduct({required this.onSubmit});
+  Function(Product produto, String? newId) onSubmit;
+  Product? produto;
+  FormProduct({required this.onSubmit,this.produto});
 
   @override
   _FormProductState createState() => _FormProductState();
@@ -16,10 +17,19 @@ class _FormProductState extends State<FormProduct> {
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _imageUrlController = TextEditingController();
 
+  void initState(){
+    super.initState();
+    if(widget.produto!=null){
+      _titleController.text = widget.produto!.title;
+      _descriptionController.text = widget.produto!.description;
+      _imageUrlController.text = widget.produto!.imageUrl;
+      _priceController.text = widget.produto!.price.toString();
+    }
+  }
+
   void _submitForm(BuildContext context) {
-    // Criar uma instância de Product com os dados do formulário
     Product newProduct = Product(
-        id: 'qwe', // Exemplo de ID baseado no tempo
+        id: 'qwe',
         title: _titleController.text,
         description: _descriptionController.text,
         price: double.parse(_priceController.text),
@@ -31,51 +41,58 @@ class _FormProductState extends State<FormProduct> {
     _priceController.clear();
     _imageUrlController.clear();
 
-    widget.onSubmit(newProduct);
-
-    // Exemplo de feedback ao usuário após a submissão
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Produto adicionado com sucesso!')),
-    );
-
+    if(widget.produto != null){
+      widget.onSubmit(newProduct, widget.produto!.id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Produto atualizado com sucesso!"))
+      );
+    }else{
+      String? newId = null;
+      widget.onSubmit(newProduct,newId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Produto adicionado com sucesso!')),
+      );
+    }
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          controller: _titleController,
-          decoration: InputDecoration(labelText: 'Título'),
-        ),
-        TextField(
-          controller: _descriptionController,
-          decoration: InputDecoration(labelText: 'Descrição'),
-        ),
-        TextField(
-          controller: _priceController,
-          decoration: InputDecoration(labelText: 'Preço'),
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
-        ),
-        TextField(
-          controller: _imageUrlController,
-          decoration: InputDecoration(labelText: 'URL da Imagem'),
-        ),
-        SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            _submitForm(context);
-          },
-          child: Text('Adicionar Produto'),
-        ),
-      ],
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: Column(
+        children: [
+          TextField(
+            controller: _titleController,
+            decoration: InputDecoration(labelText: 'Título'),
+          ),
+          TextField(
+            controller: _descriptionController,
+            decoration: InputDecoration(labelText: 'Descrição'),
+          ),
+          TextField(
+            controller: _priceController,
+            decoration: InputDecoration(labelText: 'Preço'),
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+          ),
+          TextField(
+            controller: _imageUrlController,
+            decoration: InputDecoration(labelText: 'URL da Imagem'),
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              _submitForm(context);
+            },
+            child: widget.produto!=null? Text("Atualizar produto") : Text('Adicionar Produto'),
+          ),
+        ],
+      ),
     );
   }
 
   @override
   void dispose() {
-    // Limpar os controladores quando o widget for descartado
     _titleController.dispose();
     _descriptionController.dispose();
     _priceController.dispose();

@@ -66,9 +66,10 @@ class ProdutoController {
   }
 
   static Future<Product> updateProduct(Product product) async {
+    String id = product.id;
     final response = await http.put(
         Uri.parse(
-            'https://mini-projeto-iv---flutter-default-rtdb.firebaseio.com/Produto'),
+            'https://mini-projeto-iv---flutter-default-rtdb.firebaseio.com/produto/$id.json'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

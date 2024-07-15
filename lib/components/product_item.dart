@@ -6,28 +6,30 @@ import 'package:provider/provider.dart';
 
 import '../model/product.dart';
 
-class ProductItem extends StatelessWidget {
+class ProductItem extends StatefulWidget {
+  Product produto;
+
+  ProductItem({required this.produto});
+  @override
+  State<ProductItem> createState() => _ProductItemState();
+}
+
+class _ProductItemState extends State<ProductItem> {
   @override
   Widget build(BuildContext context) {
     final cartModelx = Provider.of<CartModelX>(context);
-    //PEGANDO CONTEUDO PELO PROVIDER
-    //
-    final product = Provider.of<Product>(
-      context,
-      listen: false,
-    );
 
     _changeCart(String id) {
-      if (product.isCartShop) {
+      if (widget.produto.isCartShop) {
         ItemCart? item = cartModelx.seach(id);
         if (item != null) {
           cartModelx.getProducts.remove(item);
         }
       } else {
-        ItemCart item = new ItemCart(product: product, quantidade: 1);
+        ItemCart item = new ItemCart(product: widget.produto, quantidade: 1);
         cartModelx.getProducts.add(item);
       }
-      product.toggleCart();
+      widget.produto.toggleCart();
     }
 
     //final product = context.watch<Product>();
@@ -43,12 +45,12 @@ class ProductItem extends StatelessWidget {
       child: GridTile(
         child: GestureDetector(
           child: Image.network(
-            product.imageUrl,
+            widget.produto.imageUrl,
             fit: BoxFit.cover,
           ),
           onTap: () {
             Navigator.of(context)
-                .pushNamed(AppRoutes.PRODUCT_DETAIL, arguments: product);
+                .pushNamed(AppRoutes.PRODUCT_DETAIL, arguments: widget.produto);
           },
         ),
         footer: GridTileBar(
@@ -56,7 +58,7 @@ class ProductItem extends StatelessWidget {
           leading: IconButton(
             onPressed: () {
               //adicionando metodo ao clique do botão
-              product.toggleFavorite();
+              widget.produto.toggleFavorite();
             },
             //icon: Icon(Icons.favorite),
             //pegando icone se for favorito ou não
@@ -68,12 +70,12 @@ class ProductItem extends StatelessWidget {
             color: Theme.of(context).colorScheme.secondary,
           ),
           title: Text(
-            product.title,
+            widget.produto.title,
             textAlign: TextAlign.center,
           ),
           trailing: IconButton(
               onPressed: () {
-                _changeCart(product.id);
+                _changeCart(widget.produto.id);
               },
               icon: Consumer<Product>(
                 builder: (context, product, child) => Icon(product.isCartShop
