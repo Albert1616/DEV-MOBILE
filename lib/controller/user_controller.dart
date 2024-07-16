@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:f05_eshop/controller/produto_controller.dart';
 import 'package:f05_eshop/model/itemCart.dart';
 import 'package:f05_eshop/model/pedido.dart';
 import 'package:f05_eshop/model/product.dart';
@@ -141,5 +142,93 @@ class UserController {
       }
     }
     throw Exception("Não foi possível retornar os pedidos do usuário!");
+  }
+
+  static Future<bool> addToFavorites(String id, Product produto) async{
+    final List<User> users = await getUsers();
+    User user = users.firstWhere((user) => user.id == id);
+    List<Product> favoritos = await getFavorites(id)?? [];
+
+    if(user != null){
+      print("User nao é nulo");
+      produto.toggleFavorite();
+      favoritos.add(produto);
+      user.favoritos = favoritos;
+      updateUser(user);
+      ProdutoController.updateProduct(produto);
+      print("Usuario atualizado");
+      return true;
+    }
+
+    return false;
+  }
+
+  static Future<List<Product>> getFavorites(String id) async {
+  final response = await http.get(
+    Uri.parse(
+      'https://mini-projeto-iv---flutter-default-rtdb.firebaseio.com/user/$id/favoritos.json'
+    ),
+  );
+
+  List<Product> favoritos = [];
+
+  if (response.statusCode == 200) {
+    print("200 OK");
+    if (response.body != null) {
+      print("Body não é nulo");
+      final dynamic jbody = jsonDecode(response.body);
+
+      if (jbody != null && jbody is List) {
+        jbody.forEach((prod) {
+          if (prod is Map<String, dynamic>) {
+            Product produto = Product(
+              id: prod['id'] ?? '',
+              title: prod['title'] ?? '',
+              description: prod['description'] ?? '',
+              price: prod['price'] ?? 0.0,
+              imageUrl: prod['imageUrl'] ?? '',
+              isFavorite: prod['isFavorite'] ?? false,
+            );
+            favoritos.add(produto);
+          }
+        });
+      } else {
+        print("Corpo da resposta não é uma lista válida");
+      }
+    } else {
+      print("Corpo da resposta é nulo");
+    }
+  } else {
+    print("Erro ao buscar favoritos. Status code: ${response.statusCode}");
+  }
+
+  print('Tamanho: ${favoritos.length}');
+  return favoritos;
+}
+  static Future<bool> isFavorite(String user_id, String title) async{
+    print("Tentar pegar lista");
+  List<Product> favorites = await getFavorites(user_id);
+
+  if(!favorites.isEmpty){
+    return favorites.any((produto) => produto.title == title);
+  }
+
+  return false;
+}
+  static Future<bool> removeToFavorites(String id, Product produto) async{
+    List<User> users = await getUsers();
+    User user = users.firstWhere((user) => user.id == id);
+    List<Product> favoritos = await getFavorites(id);
+
+    if(!favoritos.isEmpty){
+      Product prod_search = favoritos.firstWhere((prod) => prod.title == produto.title);
+      prod_search.toggleFavorite();
+      favoritos.remove(prod_search);
+      ProdutoController.updateProduct(prod_search);
+      user.favoritos = favoritos;
+      updateUser(user);
+      return true;
+    }
+    return false;
   }
 }

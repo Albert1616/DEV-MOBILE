@@ -1,5 +1,9 @@
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last
+
+import 'package:f05_eshop/controller/user_controller.dart';
 import 'package:f05_eshop/model/cart.store.dart';
 import 'package:f05_eshop/model/itemCart.dart';
+import 'package:f05_eshop/model/user.store.dart';
 import 'package:f05_eshop/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +22,7 @@ class _ProductItemState extends State<ProductItem> {
   @override
   Widget build(BuildContext context) {
     final cartModelx = Provider.of<CartModelX>(context);
+    final userModelX = Provider.of<UserModelX>(context); 
 
     _changeCart(String id) {
       if (widget.produto.isCartShop) {
@@ -32,12 +37,31 @@ class _ProductItemState extends State<ProductItem> {
       widget.produto.toggleCart();
     }
 
-    //final product = context.watch<Product>();
+    _toggleFavoriteItems(Product produto) async{
+      if(userModelX.currentUser != null){
+        String id = userModelX.currentUser!.id;
+        if(await UserController.isFavorite(id, produto.title)){
+          UserController.removeToFavorites(id, produto);
+        }else{
+          UserController.addToFavorites(id, produto);
+        }
+      }else{
+        return ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text("Você precisa estar logado para favoritar produtos!",
+         ), backgroundColor: Colors.red,)
+        );
+      }
+      setState(() {
+        
+      });
+    }
 
-    var isFavorite =
-        context.select<Product, bool>((produto) => produto.isFavorite);
+    // //final product = context.watch<Product>();
 
-    var isCart = context.select<Product, bool>((produto) => produto.isCartShop);
+    // var isFavorite =
+    //     context.select<Product, bool>((produto) => produto.isFavorite);
+
+    // var isCart = context.select<Product, bool>((produto) => produto.isCartShop);
 
     return ClipRRect(
       //corta de forma arredondada o elemento de acordo com o BorderRaius
@@ -46,6 +70,11 @@ class _ProductItemState extends State<ProductItem> {
         child: GestureDetector(
           child: Image.network(
             widget.produto.imageUrl,
+            errorBuilder: (context, error, stackTrace) {
+              return Image.network(
+                'https://img.freepik.com/fotos-gratis/caixa-de-presente-de-renderizacao-3d-com-pacote-de-presente-de-fita_107791-17997.jpg?t=st=1721141100~exp=1721144700~hmac=f7750b61afba8d1f8664ccb678cec362426dc8a32179f3d1c6c4c1aebd08a798&w=740'
+              );
+            },
             fit: BoxFit.cover,
           ),
           onTap: () {
@@ -57,34 +86,30 @@ class _ProductItemState extends State<ProductItem> {
           backgroundColor: Colors.black87,
           leading: IconButton(
             onPressed: () {
-              //adicionando metodo ao clique do botão
-              widget.produto.toggleFavorite();
+              setState(() {
+                _toggleFavoriteItems(widget.produto);
+              });
             },
             //icon: Icon(Icons.favorite),
             //pegando icone se for favorito ou não
-            icon: Consumer<Product>(
-              builder: (context, product, child) => Icon(
-                  product.isFavorite ? Icons.favorite : Icons.favorite_border),
+            icon: Icon(
+                widget.produto.isFavorite ? Icons.favorite : Icons.favorite_border),
+                color: Theme.of(context).colorScheme.secondary,
             ),
-            //isFavorite ? Icons.favorite : Icons.favorite_border),
-            color: Theme.of(context).colorScheme.secondary,
-          ),
-          title: Text(
-            widget.produto.title,
-            textAlign: TextAlign.center,
-          ),
-          trailing: IconButton(
+            //isFavorite ? Icons.favorite : Icons.favorite_border),          title: Text(
+            title:  Text(widget.produto.title, textAlign: TextAlign.center,),
+            trailing: IconButton(
               onPressed: () {
-                _changeCart(widget.produto.id);
+                setState(() {
+                  _changeCart(widget.produto.id);
+                });
               },
-              icon: Consumer<Product>(
-                builder: (context, product, child) => Icon(product.isCartShop
+              icon: Icon(widget.produto.isCartShop
                     ? Icons.shopping_cart
                     : Icons.shopping_cart_checkout),
-              ),
               color: Theme.of(context).colorScheme.secondary),
+              ),
         ),
-      ),
-    );
+      );
   }
 }
