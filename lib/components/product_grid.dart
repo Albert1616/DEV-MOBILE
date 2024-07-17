@@ -5,19 +5,30 @@ import 'package:flutter/material.dart';
 import '../model/product.dart';
 import '../model/product_list.dart';
 
-class ProductGrid extends StatelessWidget {
+class ProductGrid extends StatefulWidget {
   final bool _showOnlyFavoritos;
   ProductGrid(this._showOnlyFavoritos);
+
+  @override
+  State<ProductGrid> createState() => _ProductGridState();
+}
+
+class _ProductGridState extends State<ProductGrid> {
   @override
   Widget build(BuildContext context) {
     Future<List<Product>> produtos = ProdutoController.getProducts();
+
+    _updateScreen(){
+      setState((){});
+    }
 
     return FutureBuilder<List<Product>>(
       future: produtos,
       builder: (context, snapshot) {
         if(snapshot.hasError){
+          print(snapshot.error);
           return Center(
-            child: Text("Ocorreu algum erro ao recuperar a lista de produtos"),
+            child: Text("Não há produtos cadastrados!"),
           );
         }else if(snapshot.hasData && snapshot.data!.isEmpty){
           return Center(
@@ -25,13 +36,13 @@ class ProductGrid extends StatelessWidget {
           );
         }else if(snapshot.hasData){
           final List<Product> loadedProducts =
-              _showOnlyFavoritos ? [] : snapshot.data!;
+              widget._showOnlyFavoritos ? [] : snapshot.data!;
 
           return GridView.builder(
             padding: const EdgeInsets.all(10),
             itemCount: loadedProducts.length,
             itemBuilder: (context, index) {
-              return ProductItem(produto: loadedProducts[index]); // Corrigido para passar 'produto'
+              return ProductItem(produto: loadedProducts[index], onSubmit: _updateScreen); // Corrigido para passar 'produto'
             },
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // 2 produtos por linha

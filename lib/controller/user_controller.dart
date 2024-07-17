@@ -152,6 +152,7 @@ class UserController {
     if(user != null){
       print("User nao é nulo");
       produto.toggleFavorite();
+      print("Id do produto: ${produto.id}");
       favoritos.add(produto);
       user.favoritos = favoritos;
       updateUser(user);
@@ -210,25 +211,38 @@ class UserController {
   List<Product> favorites = await getFavorites(user_id);
 
   if(!favorites.isEmpty){
+    print("Lista nao é vazia");
     return favorites.any((produto) => produto.title == title);
   }
-
+  print("Retornou falso");
   return false;
 }
-  static Future<bool> removeToFavorites(String id, Product produto) async{
-    List<User> users = await getUsers();
-    User user = users.firstWhere((user) => user.id == id);
-    List<Product> favoritos = await getFavorites(id);
+  static Future<bool> removeToFavorites(String id, Product produto) async {
+  print("Tentando remover do favoritos");
+  List<User> users = await getUsers();
+  User user = users.firstWhere((user) => user.id == id);
+  List<Product> favoritos = await getFavorites(id);
 
-    if(!favoritos.isEmpty){
-      Product prod_search = favoritos.firstWhere((prod) => prod.title == produto.title);
-      prod_search.toggleFavorite();
-      favoritos.remove(prod_search);
-      ProdutoController.updateProduct(prod_search);
-      user.favoritos = favoritos;
-      updateUser(user);
-      return true;
-    }
-    return false;
+  if (!favoritos.isEmpty) {
+    print("Lista de favoritos não é vazia");
+    // Crie uma cópia da lista favoritos para manipulação
+    List<Product> copiaFavoritos = List.from(favoritos);
+
+    Product prod_search = copiaFavoritos.firstWhere((prod) => prod.title == produto.title);
+    prod_search.toggleFavorite();
+    copiaFavoritos.remove(prod_search);
+    produto.isFavorite = false;
+    ProdutoController.updateProduct(produto);
+
+    // Atualize o usuário apenas se a remoção for bem-sucedida
+    user.favoritos = copiaFavoritos;
+    updateUser(user);
+    print("Removeu");
+    return true;
   }
+
+  print("Não removeu");
+  return false;
+}
+
 }

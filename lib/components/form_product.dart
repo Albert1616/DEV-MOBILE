@@ -34,8 +34,8 @@ class _FormProductState extends State<FormProduct> {
         description: _descriptionController.text,
         price: double.parse(_priceController.text),
         imageUrl: _imageUrlController.text,
-        isFavorite: true,
-        isCartShop: true);
+        isFavorite: false,
+        isCartShop: false);
     _titleController.clear();
     _descriptionController.clear();
     _priceController.clear();

@@ -23,10 +23,9 @@ class ProdutoController {
       });
 
       return produtos;
-      
     }
-
     throw Exception("Lista não pode ser encontrada!");
+
   }
 
   static Future<Product> saveProduct(Product product) async {

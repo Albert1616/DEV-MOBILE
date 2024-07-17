@@ -2,7 +2,10 @@
 
 import 'dart:ffi';
 
+import 'package:f05_eshop/components/form_product.dart';
 import 'package:f05_eshop/components/main_drawer.dart';
+import 'package:f05_eshop/controller/produto_controller.dart';
+import 'package:f05_eshop/model/product.dart';
 import 'package:f05_eshop/model/user.store.dart';
 import 'package:f05_eshop/model/user.store.dart';
 import 'package:f05_eshop/pages/user_form.page.dart';
@@ -101,6 +104,24 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
       );
     }
 
+    _updateScreen(){
+    setState(() {
+    });
+  }
+
+    _addProduct(Product produto, String? id){
+    ProdutoController.saveProduct(produto);
+    _updateScreen();
+  }
+
+    _openFormModal(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return FormProduct(onSubmit: _addProduct);
+        });
+  }
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Minha Loja'),
@@ -165,9 +186,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
         body: ProductGrid(_showOnlyFavorites),
         floatingActionButton: FloatingActionButton(
             onPressed: () {
-              Navigator.of(context).pushNamed(
-                AppRoutes.PRODUCT_FORM,
-              );
+              _openFormModal(context);
             },
             child: Icon(Icons.add)),
         drawer: MainDrawer());

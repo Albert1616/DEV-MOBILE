@@ -12,8 +12,8 @@ import '../model/product.dart';
 
 class ProductItem extends StatefulWidget {
   Product produto;
-
-  ProductItem({required this.produto});
+  Function() onSubmit;
+  ProductItem({required this.produto, required this.onSubmit});
   @override
   State<ProductItem> createState() => _ProductItemState();
 }
@@ -23,6 +23,17 @@ class _ProductItemState extends State<ProductItem> {
   Widget build(BuildContext context) {
     final cartModelx = Provider.of<CartModelX>(context);
     final userModelX = Provider.of<UserModelX>(context); 
+    bool isFavorite = false;
+
+    @override
+  void initState() {
+    super.initState();
+    isFavorite = widget.produto.isFavorite; // Define o estado inicial de isFavorite
+  }
+
+    _updateScreen(){
+      setState(() {});
+    }
 
     _changeCart(String id) {
       if (widget.produto.isCartShop) {
@@ -42,26 +53,23 @@ class _ProductItemState extends State<ProductItem> {
         String id = userModelX.currentUser!.id;
         if(await UserController.isFavorite(id, produto.title)){
           UserController.removeToFavorites(id, produto);
+          setState(() {  
+            isFavorite = false;
+          });
         }else{
           UserController.addToFavorites(id, produto);
-        }
+          setState(() {  
+            isFavorite = true;
+          });        }
       }else{
         return ScaffoldMessenger.of(context).showSnackBar(
          SnackBar(content: Text("Você precisa estar logado para favoritar produtos!",
          ), backgroundColor: Colors.red,)
         );
       }
-      setState(() {
-        
-      });
+      _updateScreen();
+      widget.onSubmit();
     }
-
-    // //final product = context.watch<Product>();
-
-    // var isFavorite =
-    //     context.select<Product, bool>((produto) => produto.isFavorite);
-
-    // var isCart = context.select<Product, bool>((produto) => produto.isCartShop);
 
     return ClipRRect(
       //corta de forma arredondada o elemento de acordo com o BorderRaius
@@ -90,13 +98,10 @@ class _ProductItemState extends State<ProductItem> {
                 _toggleFavoriteItems(widget.produto);
               });
             },
-            //icon: Icon(Icons.favorite),
-            //pegando icone se for favorito ou não
             icon: Icon(
-                widget.produto.isFavorite ? Icons.favorite : Icons.favorite_border),
+                (widget.produto.isFavorite && userModelX.currentUser!=null) ? Icons.favorite : Icons.favorite_border),
                 color: Theme.of(context).colorScheme.secondary,
             ),
-            //isFavorite ? Icons.favorite : Icons.favorite_border),          title: Text(
             title:  Text(widget.produto.title, textAlign: TextAlign.center,),
             trailing: IconButton(
               onPressed: () {
