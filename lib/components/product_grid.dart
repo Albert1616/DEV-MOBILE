@@ -1,6 +1,9 @@
 import 'package:f05_eshop/components/product_item.dart';
 import 'package:f05_eshop/controller/produto_controller.dart';
+import 'package:f05_eshop/controller/user_controller.dart';
+import 'package:f05_eshop/model/user.store.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../model/product.dart';
 import '../model/product_list.dart';
@@ -14,49 +17,84 @@ class ProductGrid extends StatefulWidget {
 }
 
 class _ProductGridState extends State<ProductGrid> {
+  final List<Product> produtos_favoritos = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorites();
+  }
+
+  _loadFavorites() async {
+    final userModelX = Provider.of<UserModelX>(context, listen: false);
+    if (userModelX.currentUser != null) {
+      print("User existe");
+      String id = userModelX.currentUser!.id;
+      try {
+        List<Product> favoritos = await UserController.getFavorites(id);
+        setState(() {
+          produtos_favoritos.clear();
+          produtos_favoritos.addAll(favoritos);
+        });
+      } catch (e) {
+        print("Erro ao carregar favoritos: $e");
+      }
+    } else {
+      print("User nulo");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Você precisa estar logado para ver seus favoritos"),
+        ),
+      );
+    }
+  }
+
+  _updateScreen() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     Future<List<Product>> produtos = ProdutoController.getProducts();
 
-    _updateScreen(){
-      setState((){});
-    }
-
     return FutureBuilder<List<Product>>(
       future: produtos,
       builder: (context, snapshot) {
-        if(snapshot.hasError){
+        if (snapshot.hasError) {
           print(snapshot.error);
           return Center(
-            child: Text("Não há produtos cadastrados!"),
+            child: Text("Não há produtos para mostrar!"),
           );
-        }else if(snapshot.hasData && snapshot.data!.isEmpty){
+        } else if (snapshot.hasData && snapshot.data!.isEmpty) {
           return Center(
-            child: Text("Não há produtos cadastrados!"),
+            child: Text("Não há produtos para mostrar!"),
           );
-        }else if(snapshot.hasData){
+        } else if (snapshot.hasData) {
           final List<Product> loadedProducts =
-              widget._showOnlyFavoritos ? [] : snapshot.data!;
+              widget._showOnlyFavoritos ? produtos_favoritos : snapshot.data!;
 
           return GridView.builder(
             padding: const EdgeInsets.all(10),
             itemCount: loadedProducts.length,
             itemBuilder: (context, index) {
-              return ProductItem(produto: loadedProducts[index], onSubmit: _updateScreen); // Corrigido para passar 'produto'
+              return ProductItem(
+                produto: loadedProducts[index],
+                onSubmit: _updateScreen,
+              );
             },
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // 2 produtos por linha
-              childAspectRatio: 3 / 2, // Proporção largura / altura de cada elemento
+              crossAxisCount: 2,
+              childAspectRatio: 3 / 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
           );
-        }else{
+        } else {
           return Center(
             child: CircularProgressIndicator(),
           );
         }
-      }, 
+      },
     );
   }
 }

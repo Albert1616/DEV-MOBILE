@@ -1,4 +1,5 @@
 import 'package:f05_eshop/controller/user_controller.dart';
+import 'package:f05_eshop/model/product.dart';
 import 'package:f05_eshop/model/user.dart';
 import 'package:mobx/mobx.dart';
 
@@ -12,6 +13,9 @@ abstract class _UserModelx with Store {
 
   @observable
   User? currentUser;
+
+  @observable
+  ObservableList<Product> favoritos = ObservableList<Product>();
 
   @computed
   bool get getIsLogin => this.isLogin;
@@ -30,5 +34,16 @@ abstract class _UserModelx with Store {
   @action
   void Logoff() {
     this.isLogin = false;
+    currentUser = null;
+  }
+
+  @action
+  Future<void> loadFavorites() async{
+    if (currentUser != null) {
+      String id = currentUser!.id;
+      List<Product> favorites = await UserController.getFavorites(id);
+      favoritos.clear();
+      favoritos.addAll(favorites);
+    }
   }
 }

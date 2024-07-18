@@ -1,6 +1,7 @@
 import 'package:f05_eshop/model/cart.store.dart';
 import 'package:f05_eshop/model/user.store.dart';
 import 'package:f05_eshop/pages/cart.dart';
+import 'package:f05_eshop/pages/favoritos_page.dart';
 import 'package:f05_eshop/pages/pedidos_page.dart';
 import 'package:f05_eshop/pages/product_detail_page.dart';
 import 'package:f05_eshop/pages/product_form_page.dart';
@@ -45,7 +46,8 @@ class MyApp extends StatelessWidget {
               AppRoutes.CART: (context) => Cart(),
               AppRoutes.PRODUCTS: (context) => Products(),
               AppRoutes.USER_FORM: (context) => UserFormPage(),
-              AppRoutes.PEDIDOS: (context) => PedidosPage()
+              AppRoutes.PEDIDOS: (context) => PedidosPage(),
+              AppRoutes.FAVORITES: (context) => FavoritosPage()
               //AppRoutes.PRODUCTS: (context) => Product_Management();
             },
             debugShowCheckedModeBanner: false),

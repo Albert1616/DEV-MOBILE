@@ -19,17 +19,20 @@ class ProductItem extends StatefulWidget {
 }
 
 class _ProductItemState extends State<ProductItem> {
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isFavorite = widget.produto.isFavorite;
+    print("O valor do isfavorite é:");
+    print(widget.produto.isFavorite.toString());
+  }
   @override
   Widget build(BuildContext context) {
     final cartModelx = Provider.of<CartModelX>(context);
     final userModelX = Provider.of<UserModelX>(context); 
-    bool isFavorite = false;
-
-    @override
-  void initState() {
-    super.initState();
-    isFavorite = widget.produto.isFavorite; // Define o estado inicial de isFavorite
-  }
+    
 
     _updateScreen(){
       setState(() {});
@@ -53,14 +56,15 @@ class _ProductItemState extends State<ProductItem> {
         String id = userModelX.currentUser!.id;
         if(await UserController.isFavorite(id, produto.title)){
           UserController.removeToFavorites(id, produto);
-          setState(() {  
-            isFavorite = false;
-          });
+          // setState(() {  
+          //   isFavorite = false;
+          // });
         }else{
           UserController.addToFavorites(id, produto);
-          setState(() {  
-            isFavorite = true;
-          });        }
+          // setState(() {  
+          //   isFavorite = true;
+          // });        
+        }
       }else{
         return ScaffoldMessenger.of(context).showSnackBar(
          SnackBar(content: Text("Você precisa estar logado para favoritar produtos!",
@@ -99,7 +103,7 @@ class _ProductItemState extends State<ProductItem> {
               });
             },
             icon: Icon(
-                (widget.produto.isFavorite && userModelX.currentUser!=null) ? Icons.favorite : Icons.favorite_border),
+                (widget.produto.isFavorite==true && userModelX.currentUser!=null) ? Icons.favorite : Icons.favorite_border),
                 color: Theme.of(context).colorScheme.secondary,
             ),
             title:  Text(widget.produto.title, textAlign: TextAlign.center,),
