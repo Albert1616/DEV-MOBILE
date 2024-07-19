@@ -1,3 +1,4 @@
+import 'package:f05_eshop/controller/produto_controller.dart';
 import 'package:f05_eshop/controller/user_controller.dart';
 import 'package:f05_eshop/model/cart.store.dart';
 import 'package:f05_eshop/model/itemCart.dart';
@@ -46,7 +47,10 @@ class _CartState extends State<Cart> {
     _removeItem(String id) {
       ItemCart item =
           cartModelX.getProducts.firstWhere((item) => item.product.id == id);
+      Product produto = item.product;
       cartModelX.getProducts.remove(item);
+      produto.isCartShop = false;
+      ProdutoController.updateProduct(produto);
 
       setState(() {
         price = cartModelX.calcTotal();
@@ -60,9 +64,11 @@ class _CartState extends State<Cart> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                item.product.title,
-                style: TextStyle(fontSize: 20),
+              Expanded(
+                child: Text(
+                  item.product.title,
+                  style: TextStyle(fontSize: 20),
+                ),
               ),
               Row(
                 children: [
@@ -70,19 +76,20 @@ class _CartState extends State<Cart> {
                   SizedBox(width: 15),
                   Text(item.quantidade.toString() + 'X'),
                   IconButton(
-                      onPressed: () =>
-                          {_updateQtd(item.product.id, 'decrement')},
-                      icon: Icon(Icons.remove)),
+                    onPressed: () => {_updateQtd(item.product.id, 'decrement')},
+                    icon: Icon(Icons.remove),
+                  ),
                   IconButton(
-                      onPressed: () =>
-                          {_updateQtd(item.product.id, 'increment')},
-                      icon: Icon(Icons.add)),
+                    onPressed: () => {_updateQtd(item.product.id, 'increment')},
+                    icon: Icon(Icons.add),
+                  ),
                   SizedBox(width: 15),
                   IconButton(
-                      onPressed: () => {_removeItem(item.product.id)},
-                      icon: Icon(Icons.delete_forever))
+                    onPressed: () => {_removeItem(item.product.id)},
+                    icon: Icon(Icons.delete_forever),
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -117,16 +124,19 @@ class _CartState extends State<Cart> {
             padding: EdgeInsets.all(15),
             child: Column(children: [
               Observer(
-                  builder: (context) => Expanded(
-                        child: ListView.builder(
-                          itemCount: cartModelX.getProducts.length,
-                          itemBuilder: (ctx, index) {
-                            return Wrap(children: [
-                              _createCard(cartModelX.getProducts[index])
-                            ]);
-                          },
-                        ),
-                      )),
+                builder: (context) => Expanded(
+                  child: ListView.builder(
+                    itemCount: cartModelX.getProducts.length,
+                    itemBuilder: (ctx, index) {
+                      return Container(
+                        margin: EdgeInsets.only(
+                            bottom: 10), // Adjust margin as needed
+                        child: _createCard(cartModelX.getProducts[index]),
+                      );
+                    },
+                  ),
+                ),
+              ),
               Text('Total: ${price.toStringAsPrecision(6)} R\$'),
               SizedBox(height: 15),
               ElevatedButton(

@@ -10,29 +10,7 @@ abstract class _CartModelX with Store {
   double total = 0;
 
   @observable
-  ObservableList<ItemCart> products = ObservableList<
-      ItemCart>(); /* of([
-    ItemCart(
-      product: Product(
-          id: 'p1',
-          title: 'Product 1',
-          description: 'Description for product 1',
-          price: 30,
-          imageUrl: 'https://example.com/product1.png',
-          isCartShop: true),
-      quantidade: 2,
-    ),
-    ItemCart(
-      product: Product(
-          id: 'p2',
-          title: 'Product 2',
-          description: 'Description for product 2',
-          price: 50,
-          imageUrl: 'https://example.com/product2.png',
-          isCartShop: true),
-      quantidade: 1,
-    ),
-  ]); */
+  ObservableList<ItemCart> products = ObservableList<ItemCart>();
 
   @computed
   ObservableList<ItemCart> get getProducts => this.products;
