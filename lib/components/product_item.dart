@@ -25,16 +25,14 @@ class _ProductItemState extends State<ProductItem> {
   void initState() {
     super.initState();
     isFavorite = widget.produto.isFavorite;
-    print("O valor do isfavorite é:");
-    print(widget.produto.isFavorite.toString());
   }
+
   @override
   Widget build(BuildContext context) {
     final cartModelx = Provider.of<CartModelX>(context);
-    final userModelX = Provider.of<UserModelX>(context); 
-    
+    final userModelX = Provider.of<UserModelX>(context);
 
-    _updateScreen(){
+    _updateScreen() {
       setState(() {});
     }
 
@@ -51,25 +49,27 @@ class _ProductItemState extends State<ProductItem> {
       widget.produto.toggleCart();
     }
 
-    _toggleFavoriteItems(Product produto) async{
-      if(userModelX.currentUser != null){
+    _toggleFavoriteItems(Product produto) async {
+      if (userModelX.currentUser != null) {
         String id = userModelX.currentUser!.id;
-        if(await UserController.isFavorite(id, produto.title)){
+        if (await UserController.isFavorite(id, produto.title)) {
           UserController.removeToFavorites(id, produto);
-          // setState(() {  
-          //   isFavorite = false;
-          // });
-        }else{
+          setState(() {
+            isFavorite = false;
+          });
+        } else {
           UserController.addToFavorites(id, produto);
-          // setState(() {  
-          //   isFavorite = true;
-          // });        
+          setState(() {
+            isFavorite = true;
+          });
         }
-      }else{
-        return ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text("Você precisa estar logado para favoritar produtos!",
-         ), backgroundColor: Colors.red,)
-        );
+      } else {
+        return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Você precisa estar logado para favoritar produtos!",
+          ),
+          backgroundColor: Colors.red,
+        ));
       }
       _updateScreen();
       widget.onSubmit();
@@ -84,8 +84,7 @@ class _ProductItemState extends State<ProductItem> {
             widget.produto.imageUrl,
             errorBuilder: (context, error, stackTrace) {
               return Image.network(
-                'https://img.freepik.com/fotos-gratis/caixa-de-presente-de-renderizacao-3d-com-pacote-de-presente-de-fita_107791-17997.jpg?t=st=1721141100~exp=1721144700~hmac=f7750b61afba8d1f8664ccb678cec362426dc8a32179f3d1c6c4c1aebd08a798&w=740'
-              );
+                  'https://img.freepik.com/fotos-gratis/caixa-de-presente-de-renderizacao-3d-com-pacote-de-presente-de-fita_107791-17997.jpg?t=st=1721141100~exp=1721144700~hmac=f7750b61afba8d1f8664ccb678cec362426dc8a32179f3d1c6c4c1aebd08a798&w=740');
             },
             fit: BoxFit.cover,
           ),
@@ -102,23 +101,27 @@ class _ProductItemState extends State<ProductItem> {
                 _toggleFavoriteItems(widget.produto);
               });
             },
-            icon: Icon(
-                (widget.produto.isFavorite==true && userModelX.currentUser!=null) ? Icons.favorite : Icons.favorite_border),
-                color: Theme.of(context).colorScheme.secondary,
-            ),
-            title:  Text(widget.produto.title, textAlign: TextAlign.center,),
-            trailing: IconButton(
+            icon: Icon((isFavorite && userModelX.currentUser != null)
+                ? Icons.favorite
+                : Icons.favorite_border),
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          title: Text(
+            widget.produto.title,
+            textAlign: TextAlign.center,
+          ),
+          trailing: IconButton(
               onPressed: () {
                 setState(() {
                   _changeCart(widget.produto.id);
                 });
               },
               icon: Icon(widget.produto.isCartShop
-                    ? Icons.shopping_cart
-                    : Icons.shopping_cart_checkout),
+                  ? Icons.shopping_cart
+                  : Icons.shopping_cart_checkout),
               color: Theme.of(context).colorScheme.secondary),
-              ),
         ),
-      );
+      ),
+    );
   }
 }

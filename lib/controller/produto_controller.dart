@@ -14,18 +14,20 @@ class ProdutoController {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jbody = jsonDecode(response.body);
-      jbody.forEach((key, value){
+      jbody.forEach((key, value) {
         Product produto = new Product(
-          id: key, title: value['title'], 
-          description: value['description'], price: value['price'], 
-          imageUrl: value['imageUrl']);
+            id: key,
+            title: value['title'],
+            description: value['description'],
+            price: value['price'],
+            imageUrl: value['imageUrl'],
+            isFavorite: value['isFavorite']);
         produtos.add(produto);
       });
 
       return produtos;
     }
     throw Exception("Lista não pode ser encontrada!");
-
   }
 
   static Future<Product> saveProduct(Product product) async {
@@ -45,19 +47,17 @@ class ProdutoController {
           'isCartShop': product.isCartShop
         }));
     if (response.statusCode == 200) {
-      print("Salvo");
       return Product.fromJson(jsonDecode(response.body));
     } else {
       throw Exception("ERRO não foi possível salvar o produto!");
     }
   }
 
-  static Future<Product> deleteProduct(String id) async{
-    final response = await http.delete(
-      Uri.parse('https://mini-projeto-iv---flutter-default-rtdb.firebaseio.com/produto/$id.json')
-    );
+  static Future<Product> deleteProduct(String id) async {
+    final response = await http.delete(Uri.parse(
+        'https://mini-projeto-iv---flutter-default-rtdb.firebaseio.com/produto/$id.json'));
 
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       return Product.fromJson(jsonDecode(response.body));
     }
 

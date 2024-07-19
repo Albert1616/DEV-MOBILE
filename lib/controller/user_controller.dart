@@ -37,14 +37,12 @@ class UserController {
               pedidos.add(Pedido.fromJson(pedido));
             });
             user.pedidos = pedidos;
-          } else if (!(value['pedidos'] is List)) {
-            print("Não é uma lista");
-          }
+          } else if (!(value['pedidos'] is List)) {}
 
           users.add(user);
         });
       } else {
-        print("BOdy nulo");
+        throw Exception("BOdy nulo");
       }
 
       if (users.isEmpty) {
@@ -144,20 +142,17 @@ class UserController {
     throw Exception("Não foi possível retornar os pedidos do usuário!");
   }
 
-  static Future<bool> addToFavorites(String id, Product produto) async{
+  static Future<bool> addToFavorites(String id, Product produto) async {
     final List<User> users = await getUsers();
     User user = users.firstWhere((user) => user.id == id);
-    List<Product> favoritos = await getFavorites(id)?? [];
+    List<Product> favoritos = await getFavorites(id) ?? [];
 
-    if(user != null){
-      print("User nao é nulo");
+    if (user != null) {
       produto.toggleFavorite();
-      print("Id do produto: ${produto.id}");
       favoritos.add(produto);
       user.favoritos = favoritos;
       updateUser(user);
       ProdutoController.updateProduct(produto);
-      print("Usuario atualizado");
       return true;
     }
 
@@ -165,84 +160,74 @@ class UserController {
   }
 
   static Future<List<Product>> getFavorites(String id) async {
-  final response = await http.get(
-    Uri.parse(
-      'https://mini-projeto-iv---flutter-default-rtdb.firebaseio.com/user/$id/favoritos.json'
-    ),
-  );
+    final response = await http.get(
+      Uri.parse(
+          'https://mini-projeto-iv---flutter-default-rtdb.firebaseio.com/user/$id/favoritos.json'),
+    );
 
-  List<Product> favoritos = [];
+    List<Product> favoritos = [];
 
-  if (response.statusCode == 200) {
-    print("200 OK");
-    if (response.body != null) {
-      print("Body não é nulo");
-      final dynamic jbody = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      if (response.body != null) {
+        final dynamic jbody = jsonDecode(response.body);
 
-      if (jbody != null && jbody is List) {
-        jbody.forEach((prod) {
-          if (prod is Map<String, dynamic>) {
-            Product produto = Product(
-              id: prod['id'] ?? '',
-              title: prod['title'] ?? '',
-              description: prod['description'] ?? '',
-              price: prod['price'] ?? 0.0,
-              imageUrl: prod['imageUrl'] ?? '',
-              isFavorite: prod['isFavorite'] ?? false,
-            );
-            favoritos.add(produto);
-          }
-        });
+        if (jbody != null && jbody is List) {
+          jbody.forEach((prod) {
+            if (prod is Map<String, dynamic>) {
+              Product produto = Product(
+                id: prod['id'] ?? '',
+                title: prod['title'] ?? '',
+                description: prod['description'] ?? '',
+                price: prod['price'] ?? 0.0,
+                imageUrl: prod['imageUrl'] ?? '',
+                isFavorite: prod['isFavorite'] ?? false,
+              );
+              favoritos.add(produto);
+            }
+          });
+        } else {
+          throw Exception("Corpo da resposta não é uma lista válida");
+        }
       } else {
-        print("Corpo da resposta não é uma lista válida");
+        throw Exception("Corpo da resposta é nulo");
       }
     } else {
-      print("Corpo da resposta é nulo");
+      throw Exception(
+          "Erro ao buscar favoritos. Status code: ${response.statusCode}");
     }
-  } else {
-    print("Erro ao buscar favoritos. Status code: ${response.statusCode}");
+    return favoritos;
   }
 
-  print('Tamanho: ${favoritos.length}');
-  return favoritos;
-}
-  static Future<bool> isFavorite(String user_id, String title) async{
-    print("Tentar pegar lista");
-  List<Product> favorites = await getFavorites(user_id);
+  static Future<bool> isFavorite(String user_id, String title) async {
+    List<Product> favorites = await getFavorites(user_id);
 
-  if(!favorites.isEmpty){
-    print("Lista nao é vazia");
-    return favorites.any((produto) => produto.title == title);
+    if (!favorites.isEmpty) {
+      return favorites.any((produto) => produto.title == title);
+    }
+    return false;
   }
-  print("Retornou falso");
-  return false;
-}
+
   static Future<bool> removeToFavorites(String id, Product produto) async {
-  print("Tentando remover do favoritos");
-  List<User> users = await getUsers();
-  User user = users.firstWhere((user) => user.id == id);
-  List<Product> favoritos = await getFavorites(id);
+    List<User> users = await getUsers();
+    User user = users.firstWhere((user) => user.id == id);
+    List<Product> favoritos = await getFavorites(id);
 
-  if (!favoritos.isEmpty) {
-    print("Lista de favoritos não é vazia");
-    // Crie uma cópia da lista favoritos para manipulação
-    List<Product> copiaFavoritos = List.from(favoritos);
+    if (!favoritos.isEmpty) {
+      // Crie uma cópia da lista favoritos para manipulação
+      List<Product> copiaFavoritos = List.from(favoritos);
 
-    Product prod_search = copiaFavoritos.firstWhere((prod) => prod.title == produto.title);
-    prod_search.toggleFavorite();
-    copiaFavoritos.remove(prod_search);
-    produto.isFavorite = false;
-    ProdutoController.updateProduct(produto);
+      Product prod_search =
+          copiaFavoritos.firstWhere((prod) => prod.title == produto.title);
+      prod_search.toggleFavorite();
+      copiaFavoritos.remove(prod_search);
+      produto.isFavorite = false;
+      ProdutoController.updateProduct(produto);
 
-    // Atualize o usuário apenas se a remoção for bem-sucedida
-    user.favoritos = copiaFavoritos;
-    updateUser(user);
-    print("Removeu");
-    return true;
+      // Atualize o usuário apenas se a remoção for bem-sucedida
+      user.favoritos = copiaFavoritos;
+      updateUser(user);
+      return true;
+    }
+    return false;
   }
-
-  print("Não removeu");
-  return false;
-}
-
 }

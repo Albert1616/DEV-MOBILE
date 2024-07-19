@@ -17,36 +17,9 @@ class ProductGrid extends StatefulWidget {
 }
 
 class _ProductGridState extends State<ProductGrid> {
-  final List<Product> produtos_favoritos = [];
-
   @override
   void initState() {
     super.initState();
-    _loadFavorites();
-  }
-
-  _loadFavorites() async {
-    final userModelX = Provider.of<UserModelX>(context, listen: false);
-    if (userModelX.currentUser != null) {
-      print("User existe");
-      String id = userModelX.currentUser!.id;
-      try {
-        List<Product> favoritos = await UserController.getFavorites(id);
-        setState(() {
-          produtos_favoritos.clear();
-          produtos_favoritos.addAll(favoritos);
-        });
-      } catch (e) {
-        print("Erro ao carregar favoritos: $e");
-      }
-    } else {
-      print("User nulo");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Você precisa estar logado para ver seus favoritos"),
-        ),
-      );
-    }
   }
 
   _updateScreen() {
@@ -71,7 +44,7 @@ class _ProductGridState extends State<ProductGrid> {
           );
         } else if (snapshot.hasData) {
           final List<Product> loadedProducts =
-              widget._showOnlyFavoritos ? produtos_favoritos : snapshot.data!;
+              widget._showOnlyFavoritos ? [] : snapshot.data!;
 
           return GridView.builder(
             padding: const EdgeInsets.all(10),
